@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap");
 
+@import "tailwindcss";
 :root {
   --primary: #6366f1;
   --primary-hover: #4f46e5;
@@ -20,22 +21,6 @@
 body {
   font-family: "Outfit", sans-serif;
   background-color: var(--bg-dark);
-  color: var(--text-light);
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-image:
-    radial-gradient(
-      circle at 15% 50%,
-      rgba(99, 102, 241, 0.15),
-      transparent 25%
-    ),
-    radial-gradient(
-      circle at 85% 30%,
-      rgba(139, 92, 246, 0.15),
-      transparent 25%
-    );
 }
 
 .auth-container {
