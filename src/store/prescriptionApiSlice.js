@@ -18,6 +18,13 @@ export const prescriptionApiSlice = apiSlice.injectEndpoints({
       query: (id) => `/prescriptions/${id}`,
       providesTags: (result, error, id) => [{ type: "Prescription", id }],
     }),
+    generatePDF: builder.mutation({
+      query: (id) => ({
+        url: `/prescriptions/${id}/generate-pdf`,
+        method: "POST",
+      }),
+      invalidatesTags: (result, error, id) => [{ type: "Prescription", id }],
+    }),
   }),
 });
 
@@ -25,4 +32,5 @@ export const {
   useGetPrescriptionsQuery,
   useCreatePrescriptionMutation,
   useGetPrescriptionByIdQuery,
+  useGeneratePDFMutation,
 } = prescriptionApiSlice;

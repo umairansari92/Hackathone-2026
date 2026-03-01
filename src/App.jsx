@@ -5,6 +5,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Toaster } from "react-hot-toast";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -12,107 +13,135 @@ import Layout from "./layouts/Layout";
 import AuthLayout from "./layouts/AuthLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+// Role Dashboards
 import AdminDashboard from "./pages/AdminDashboard";
 import DoctorDashboard from "./pages/DoctorDashboard";
 import ReceptionistDashboard from "./pages/ReceptionistDashboard";
 import PatientDashboard from "./pages/PatientDashboard";
+
+// Admin pages
+import ManageDoctors from "./pages/ManageDoctors";
+import ManageUsers from "./pages/ManageUsers";
+
+// Doctor pages
 import SmartDiagnosis from "./pages/SmartDiagnosis";
 import NewPrescription from "./pages/NewPrescription";
 
-// Shared List Views
+// Receptionist pages
+import BookAppointment from "./pages/BookAppointment";
+import TokenQueue from "./pages/TokenQueue";
+import DoctorScheduleView from "./pages/DoctorScheduleView";
+
+// Shared pages
 import PatientsList from "./pages/PatientsList";
 import AppointmentsList from "./pages/AppointmentsList";
 import PrescriptionsList from "./pages/PrescriptionsList";
+import PrescriptionViewer from "./pages/PrescriptionViewer";
 
 const App = () => {
   const { user } = useSelector((state) => state.auth);
 
   return (
-    <Router>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Home />} />
-
-        <Route element={<AuthLayout />}>
-          <Route
-            path="/login"
-            element={
-              user ? (
-                <Navigate
-                  to={`/${user.role?.toLowerCase() || "patient"}-dashboard`}
-                  replace
-                />
-              ) : (
-                <Login />
-              )
-            }
-          />
-          <Route
-            path="/signup"
-            element={
-              user ? (
-                <Navigate
-                  to={`/${user.role?.toLowerCase() || "patient"}-dashboard`}
-                  replace
-                />
-              ) : (
-                <Signup />
-              )
-            }
-          />
-        </Route>
-
-        {/* Protected Routes Wrapper */}
-        <Route element={<Layout />}>
-          {/* Admin Routes */}
-          <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}>
-            <Route path="/admin-dashboard" element={<AdminDashboard />} />
-          </Route>
-
-          {/* Doctor Routes */}
-          <Route element={<ProtectedRoute allowedRoles={["Doctor"]} />}>
-            <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
-            <Route path="/smart-diagnosis" element={<SmartDiagnosis />} />
-            <Route path="/prescriptions/new" element={<NewPrescription />} />
-          </Route>
-
-          {/* Receptionist Routes */}
-          <Route element={<ProtectedRoute allowedRoles={["Receptionist"]} />}>
+    <>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3500,
+          style: {
+            fontFamily: "'Outfit', sans-serif",
+            fontWeight: 600,
+            borderRadius: 12,
+            fontSize: "0.875rem",
+          },
+          success: { iconTheme: { primary: "#0d9488", secondary: "#fff" } },
+          error: { iconTheme: { primary: "#ef4444", secondary: "#fff" } },
+        }}
+      />
+      <Router>
+        <Routes>
+          {/* Public */}
+          <Route path="/" element={<Home />} />
+          <Route element={<AuthLayout />}>
             <Route
-              path="/receptionist-dashboard"
-              element={<ReceptionistDashboard />}
-            />
-          </Route>
-
-          {/* Patient Routes */}
-          <Route element={<ProtectedRoute allowedRoles={["Patient"]} />}>
-            <Route path="/patient-dashboard" element={<PatientDashboard />} />
-          </Route>
-
-          {/* Shared Routes */}
-          <Route
-            element={
-              <ProtectedRoute
-                allowedRoles={["Admin", "Doctor", "Receptionist", "Patient"]}
-              />
-            }
-          >
-            <Route
-              path="/patients"
+              path="/login"
               element={
-                <ProtectedRoute
-                  allowedRoles={["Admin", "Doctor", "Receptionist"]}
-                >
-                  <PatientsList />
-                </ProtectedRoute>
+                user ? (
+                  <Navigate
+                    to={`/${user.role?.toLowerCase()}-dashboard`}
+                    replace
+                  />
+                ) : (
+                  <Login />
+                )
               }
             />
-            <Route path="/appointments" element={<AppointmentsList />} />
-            <Route path="/prescriptions" element={<PrescriptionsList />} />
+            <Route
+              path="/signup"
+              element={
+                user ? (
+                  <Navigate
+                    to={`/${user.role?.toLowerCase()}-dashboard`}
+                    replace
+                  />
+                ) : (
+                  <Signup />
+                )
+              }
+            />
           </Route>
-        </Route>
-      </Routes>
-    </Router>
+
+          {/* Protected layout */}
+          <Route element={<Layout />}>
+            {/* ── Admin ── */}
+            <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}>
+              <Route path="/admin-dashboard" element={<AdminDashboard />} />
+              <Route path="/manage-doctors" element={<ManageDoctors />} />
+              <Route path="/manage-users" element={<ManageUsers />} />
+            </Route>
+
+            {/* ── Doctor ── */}
+            <Route element={<ProtectedRoute allowedRoles={["Doctor"]} />}>
+              <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
+              <Route path="/smart-diagnosis" element={<SmartDiagnosis />} />
+              <Route path="/prescriptions/new" element={<NewPrescription />} />
+            </Route>
+
+            {/* ── Receptionist ── */}
+            <Route element={<ProtectedRoute allowedRoles={["Receptionist"]} />}>
+              <Route
+                path="/receptionist-dashboard"
+                element={<ReceptionistDashboard />}
+              />
+              <Route path="/book-appointment" element={<BookAppointment />} />
+              <Route path="/token-queue" element={<TokenQueue />} />
+              <Route path="/doctor-schedule" element={<DoctorScheduleView />} />
+            </Route>
+
+            {/* ── Patient ── */}
+            <Route element={<ProtectedRoute allowedRoles={["Patient"]} />}>
+              <Route path="/patient-dashboard" element={<PatientDashboard />} />
+            </Route>
+
+            {/* ── Shared (multi-role) ── */}
+            <Route
+              element={
+                <ProtectedRoute
+                  allowedRoles={["Admin", "Doctor", "Receptionist", "Patient"]}
+                />
+              }
+            >
+              <Route path="/patients" element={<PatientsList />} />
+              <Route path="/appointments" element={<AppointmentsList />} />
+              <Route path="/prescriptions" element={<PrescriptionsList />} />
+              <Route
+                path="/prescriptions/:id"
+                element={<PrescriptionViewer />}
+              />
+            </Route>
+          </Route>
+        </Routes>
+      </Router>
+    </>
   );
 };
 

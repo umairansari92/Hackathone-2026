@@ -1,165 +1,426 @@
+import { useState } from "react";
 import { useGetPatientsQuery } from "../store/patientApiSlice";
-import { Users, Search, Activity, Calendar } from "lucide-react";
+import { Users, Search, Activity, Calendar, Phone } from "lucide-react";
+import { motion } from "framer-motion";
 
 const PatientsList = () => {
   const { data: patients, isLoading, isError, error } = useGetPatientsQuery();
+  const [search, setSearch] = useState("");
+
+  const filtered = patients?.filter(
+    (p) =>
+      p.name?.toLowerCase().includes(search.toLowerCase()) ||
+      p.contact?.includes(search),
+  );
 
   if (isLoading)
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "60vh",
+        }}
+      >
+        <div
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: "50%",
+            border: "3px solid #e2e8f0",
+            borderTopColor: "#0d9488",
+            animation: "spin 0.9s linear infinite",
+          }}
+        />
       </div>
     );
 
-  if (isError) {
+  if (isError)
     return (
-      <div className="p-8 text-red-500 text-center">
+      <div
+        style={{
+          padding: "32px",
+          textAlign: "center",
+          color: "#dc2626",
+          background: "#fef2f2",
+          borderRadius: 16,
+          border: "1px solid #fecaca",
+        }}
+      >
         Error loading patients: {error?.data?.message || "Unknown error"}
       </div>
     );
-  }
+
+  const avatarColors = [
+    "#0d9488",
+    "#3b82f6",
+    "#8b5cf6",
+    "#f59e0b",
+    "#10b981",
+    "#ef4444",
+  ];
 
   return (
-    <div className="space-y-8 pb-8">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div style={{ fontFamily: "'Outfit', sans-serif", paddingBottom: 48 }}>
+      {/* ── Header ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        style={{
+          marginBottom: 28,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-end",
+          flexWrap: "wrap",
+          gap: 14,
+        }}
+      >
         <div>
-          <h2 className="text-3xl font-bold text-slate-800 tracking-tight">
+          <h2
+            style={{
+              fontSize: "1.65rem",
+              fontWeight: 800,
+              color: "#0f172a",
+              marginBottom: 4,
+            }}
+          >
             Patient Directory
           </h2>
-          <p className="text-slate-500 mt-1">
+          <p style={{ color: "#64748b", fontSize: "0.875rem" }}>
             View and manage all registered clinic patients.
           </p>
         </div>
-
-        <div className="relative w-full md:w-64">
-          <input
-            type="text"
-            placeholder="Search patients..."
-            className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-          />
+        {/* Search */}
+        <div style={{ position: "relative" }}>
           <Search
-            className="absolute left-3 top-2.5 text-slate-400"
-            size={18}
+            size={15}
+            style={{
+              position: "absolute",
+              left: 12,
+              top: "50%",
+              transform: "translateY(-50%)",
+              color: "#94a3b8",
+            }}
+          />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by name or contact..."
+            style={{
+              paddingLeft: 36,
+              paddingRight: 14,
+              paddingTop: 9,
+              paddingBottom: 9,
+              border: "1.5px solid #e2e8f0",
+              borderRadius: 12,
+              fontSize: "0.875rem",
+              fontFamily: "inherit",
+              outline: "none",
+              background: "white",
+              minWidth: 240,
+              boxSizing: "border-box",
+              transition: "border-color 0.2s",
+            }}
+            onFocus={(e) => (e.target.style.borderColor = "#0d9488")}
+            onBlur={(e) => (e.target.style.borderColor = "#e2e8f0")}
           />
         </div>
-      </div>
+      </motion.div>
 
-      {/* Main Content Area */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex items-center gap-2 bg-gradient-to-r from-slate-50 to-white">
-          <Users size={20} className="text-indigo-600" />
-          <h3 className="text-lg font-bold text-slate-800">
-            Registered Patients{" "}
-            <span className="text-sm font-normal text-slate-500 ml-2">
-              ({patients?.length || 0} total)
-            </span>
+      {/* ── Table Card ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.08 }}
+        style={{
+          background: "rgba(255,255,255,0.8)",
+          backdropFilter: "blur(16px)",
+          border: "1px solid rgba(255,255,255,0.9)",
+          borderRadius: 18,
+          overflow: "hidden",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
+        }}
+      >
+        <div
+          style={{
+            padding: "18px 24px",
+            borderBottom: "1px solid #f1f5f9",
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+          }}
+        >
+          <Users size={18} color="#0d9488" />
+          <h3
+            style={{ fontWeight: 700, color: "#1e293b", fontSize: "0.95rem" }}
+          >
+            Registered Patients
           </h3>
+          <span
+            style={{
+              background: "#0d9488",
+              color: "white",
+              borderRadius: 20,
+              fontSize: "0.65rem",
+              fontWeight: 800,
+              padding: "2px 8px",
+            }}
+          >
+            {filtered?.length || 0}
+          </span>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        <div style={{ overflowX: "auto" }}>
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              fontSize: "0.875rem",
+            }}
+          >
             <thead>
-              <tr className="bg-slate-50/50">
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  Patient Info
-                </th>
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  Demographics
-                </th>
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  Contact
-                </th>
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  Registered By
-                </th>
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
-                  Quick Actions
-                </th>
+              <tr style={{ background: "#f8fafc" }}>
+                {[
+                  "PATIENT INFO",
+                  "DEMOGRAPHICS",
+                  "CONTACT",
+                  "REGISTERED BY",
+                  "ACTIONS",
+                ].map((h, i) => (
+                  <th
+                    key={h}
+                    style={{
+                      padding: "11px 22px",
+                      textAlign: i === 4 ? "right" : "left",
+                      fontSize: "0.65rem",
+                      fontWeight: 700,
+                      color: "#94a3b8",
+                      letterSpacing: "0.07em",
+                    }}
+                  >
+                    {h}
+                  </th>
+                ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
-              {patients?.map((patient) => (
-                <tr
-                  key={patient._id}
-                  className="hover:bg-slate-50/80 transition-colors group"
-                >
-                  <td className="p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold">
-                        {patient.name.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <span className="font-semibold text-slate-800 block">
-                          {patient.name}
-                        </span>
-                        <span className="text-xs text-slate-400 font-mono">
-                          ID:{" "}
-                          {patient._id
-                            .substring(patient._id.length - 6)
-                            .toUpperCase()}
-                        </span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="p-4 text-sm text-slate-600">
-                    <div className="flex items-center gap-2">
-                      <span className="px-2 py-1 bg-slate-100 rounded text-xs font-medium">
-                        {patient.age} yrs
-                      </span>
-                      <span className="px-2 py-1 bg-slate-100 rounded text-xs font-medium">
-                        {patient.gender}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="p-4 text-sm text-slate-600 font-medium whitespace-nowrap">
-                    {patient.contact}
-                  </td>
-                  <td className="p-4">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
-                      {patient.createdBy?.fullname || "System"}
-                    </span>
-                  </td>
-                  <td className="p-4 text-right">
-                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button
-                        className="p-2 text-slate-400 hover:text-indigo-600 bg-white hover:bg-slate-50 rounded-full transition-colors border border-transparent hover:border-slate-200"
-                        title="View Timeline"
+            <tbody>
+              {filtered?.map((patient, idx) => {
+                const color = avatarColors[idx % avatarColors.length];
+                return (
+                  <tr
+                    key={patient._id}
+                    style={{
+                      borderTop: "1px solid #f1f5f9",
+                      transition: "background 0.15s",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.background = "#f8fafc88")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.background = "transparent")
+                    }
+                  >
+                    {/* Patient Info */}
+                    <td style={{ padding: "13px 22px" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 10,
+                        }}
                       >
-                        <Activity size={16} />
-                      </button>
-                      <button
-                        className="p-2 text-slate-400 hover:text-teal-600 bg-white hover:bg-slate-50 rounded-full transition-colors border border-transparent hover:border-slate-200"
-                        title="Book Appointment"
+                        <div
+                          style={{
+                            width: 36,
+                            height: 36,
+                            borderRadius: 10,
+                            background: `linear-gradient(135deg, ${color}, ${color}bb)`,
+                            color: "white",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontWeight: 800,
+                            fontSize: "0.9rem",
+                            flexShrink: 0,
+                          }}
+                        >
+                          {patient.name?.charAt(0)?.toUpperCase()}
+                        </div>
+                        <div>
+                          <p style={{ fontWeight: 700, color: "#1e293b" }}>
+                            {patient.name}
+                          </p>
+                          <p
+                            style={{
+                              fontSize: "0.68rem",
+                              color: "#94a3b8",
+                              fontFamily: "monospace",
+                            }}
+                          >
+                            ID:{" "}
+                            {patient._id
+                              ?.substring(patient._id.length - 6)
+                              .toUpperCase()}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    {/* Demographics */}
+                    <td style={{ padding: "13px 22px" }}>
+                      <div style={{ display: "flex", gap: 6 }}>
+                        <span
+                          style={{
+                            padding: "3px 9px",
+                            background: "#f1f5f9",
+                            borderRadius: 8,
+                            fontSize: "0.72rem",
+                            fontWeight: 700,
+                            color: "#475569",
+                          }}
+                        >
+                          {patient.age} yrs
+                        </span>
+                        <span
+                          style={{
+                            padding: "3px 9px",
+                            background: "#f1f5f9",
+                            borderRadius: 8,
+                            fontSize: "0.72rem",
+                            fontWeight: 700,
+                            color: "#475569",
+                          }}
+                        >
+                          {patient.gender}
+                        </span>
+                      </div>
+                    </td>
+                    {/* Contact */}
+                    <td style={{ padding: "13px 22px" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 6,
+                          color: "#475569",
+                          fontWeight: 500,
+                        }}
                       >
-                        <Calendar size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-
-              {(!patients || patients.length === 0) && (
+                        <Phone size={13} color="#94a3b8" />
+                        {patient.contact}
+                      </div>
+                    </td>
+                    {/* Registered By */}
+                    <td style={{ padding: "13px 22px" }}>
+                      <span
+                        style={{
+                          padding: "4px 10px",
+                          background: "#f8fafc",
+                          border: "1px solid #e2e8f0",
+                          borderRadius: 8,
+                          fontSize: "0.72rem",
+                          fontWeight: 600,
+                          color: "#64748b",
+                        }}
+                      >
+                        {patient.createdBy?.fullname || "System"}
+                      </span>
+                    </td>
+                    {/* Actions */}
+                    <td style={{ padding: "13px 22px", textAlign: "right" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: 6,
+                          justifyContent: "flex-end",
+                        }}
+                      >
+                        <button
+                          title="View Timeline"
+                          style={{
+                            width: 32,
+                            height: 32,
+                            borderRadius: 9,
+                            border: "1px solid #e2e8f0",
+                            background: "white",
+                            color: "#64748b",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            cursor: "pointer",
+                            transition: "all 0.15s",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = "#818cf8";
+                            e.currentTarget.style.color = "#6366f1";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = "#e2e8f0";
+                            e.currentTarget.style.color = "#64748b";
+                          }}
+                        >
+                          <Activity size={15} />
+                        </button>
+                        <button
+                          title="Book Appointment"
+                          style={{
+                            width: 32,
+                            height: 32,
+                            borderRadius: 9,
+                            border: "1px solid #e2e8f0",
+                            background: "white",
+                            color: "#64748b",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            cursor: "pointer",
+                            transition: "all 0.15s",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = "#a7f3d0";
+                            e.currentTarget.style.color = "#0d9488";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = "#e2e8f0";
+                            e.currentTarget.style.color = "#64748b";
+                          }}
+                        >
+                          <Calendar size={15} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+              {(!filtered || filtered.length === 0) && (
                 <tr>
-                  <td colSpan="5" className="p-12 text-center text-slate-500">
-                    <div className="flex flex-col items-center justify-center">
-                      <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                        <Users size={32} className="text-slate-300" />
-                      </div>
-                      <p className="text-lg font-medium text-slate-600">
-                        No patients found
-                      </p>
-                      <p className="text-sm text-slate-400 mt-1">
-                        The directory is currently empty.
-                      </p>
-                    </div>
+                  <td
+                    colSpan={5}
+                    style={{ padding: "48px", textAlign: "center" }}
+                  >
+                    <Users
+                      size={40}
+                      style={{ margin: "0 auto 12px", color: "#e2e8f0" }}
+                    />
+                    <p style={{ fontWeight: 700, color: "#64748b" }}>
+                      No patients found
+                    </p>
+                    <p
+                      style={{
+                        fontSize: "0.8rem",
+                        color: "#94a3b8",
+                        marginTop: 4,
+                      }}
+                    >
+                      The directory is currently empty.
+                    </p>
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

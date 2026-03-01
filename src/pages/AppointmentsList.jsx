@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useGetAppointmentsQuery } from "../store/appointmentApiSlice";
 import { useSelector } from "react-redux";
 import {
@@ -8,7 +9,14 @@ import {
   CheckCircle2,
   XCircle,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import dayjs from "dayjs";
+
+const STATUS_SC = {
+  Scheduled: { bg: "#fffbeb", color: "#d97706", border: "#fde68a" },
+  Completed: { bg: "#ecfdf5", color: "#059669", border: "#a7f3d0" },
+  Cancelled: { bg: "#fef2f2", color: "#dc2626", border: "#fecaca" },
+};
 
 const AppointmentsList = () => {
   const {
@@ -18,209 +26,389 @@ const AppointmentsList = () => {
     error,
   } = useGetAppointmentsQuery();
   const { user } = useSelector((state) => state.auth);
+  const [filter, setFilter] = useState("all");
+
+  const filtered =
+    filter === "all"
+      ? appointments
+      : appointments?.filter((a) => a.status?.toLowerCase() === filter);
 
   if (isLoading)
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "60vh",
+        }}
+      >
+        <div
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: "50%",
+            border: "3px solid #e2e8f0",
+            borderTopColor: "#0d9488",
+            animation: "spin 0.9s linear infinite",
+          }}
+        />
       </div>
     );
 
-  if (isError) {
+  if (isError)
     return (
-      <div className="p-8 text-red-500 text-center">
+      <div
+        style={{
+          padding: "32px",
+          textAlign: "center",
+          color: "#dc2626",
+          background: "#fef2f2",
+          borderRadius: 16,
+          border: "1px solid #fecaca",
+        }}
+      >
         Error loading appointments: {error?.data?.message || "Unknown error"}
       </div>
     );
-  }
-
-  const getStatusStyle = (status) => {
-    switch (status) {
-      case "Scheduled":
-        return "bg-amber-100 text-amber-700 border-amber-200";
-      case "Completed":
-        return "bg-teal-100 text-teal-700 border-teal-200";
-      case "Cancelled":
-        return "bg-red-100 text-red-700 border-red-200";
-      default:
-        return "bg-slate-100 text-slate-700 border-slate-200";
-    }
-  };
-
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case "Scheduled":
-        return <Clock size={14} className="mr-1" />;
-      case "Completed":
-        return <CheckCircle2 size={14} className="mr-1" />;
-      case "Cancelled":
-        return <XCircle size={14} className="mr-1" />;
-      default:
-        return <Activity size={14} className="mr-1" />;
-    }
-  };
 
   return (
-    <div className="space-y-8 pb-8">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div style={{ fontFamily: "'Outfit', sans-serif", paddingBottom: 48 }}>
+      {/* ── Header ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        style={{
+          marginBottom: 28,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-end",
+          flexWrap: "wrap",
+          gap: 14,
+        }}
+      >
         <div>
-          <h2 className="text-3xl font-bold text-slate-800 tracking-tight">
+          <h2
+            style={{
+              fontSize: "1.65rem",
+              fontWeight: 800,
+              color: "#0f172a",
+              marginBottom: 4,
+            }}
+          >
             Schedule Overview
           </h2>
-          <p className="text-slate-500 mt-1">
+          <p style={{ color: "#64748b", fontSize: "0.875rem" }}>
             {user?.role === "Patient"
               ? "Your upcoming and past clinic visits."
               : "Manage all clinic appointments and schedules."}
           </p>
         </div>
-
         {user?.role !== "Patient" && (
-          <div className="flex gap-2">
-            <select className="px-4 py-2 border border-slate-200 rounded-lg bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-              <option value="all">All Statuses</option>
-              <option value="scheduled">Scheduled</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
+          <div
+            style={{
+              display: "flex",
+              background: "#f1f5f9",
+              padding: 4,
+              borderRadius: 999,
+              gap: 2,
+            }}
+          >
+            {["all", "scheduled", "completed", "cancelled"].map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                style={{
+                  padding: "6px 14px",
+                  borderRadius: 999,
+                  border: "none",
+                  cursor: "pointer",
+                  fontFamily: "inherit",
+                  fontSize: "0.78rem",
+                  fontWeight: 700,
+                  transition: "all 0.18s",
+                  background: filter === f ? "#0d9488" : "transparent",
+                  color: filter === f ? "white" : "#64748b",
+                  boxShadow:
+                    filter === f ? "0 2px 8px rgba(13,148,136,0.3)" : "none",
+                }}
+              >
+                {f.charAt(0).toUpperCase() + f.slice(1)}
+              </button>
+            ))}
           </div>
         )}
-      </div>
+      </motion.div>
 
-      {/* Main Content Area */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex items-center gap-2 bg-gradient-to-r from-slate-50 to-white">
-          <Calendar size={20} className="text-indigo-600" />
-          <h3 className="text-lg font-bold text-slate-800">
-            Appointments{" "}
-            <span className="text-sm font-normal text-slate-500 ml-2">
-              ({appointments?.length || 0} records)
-            </span>
+      {/* ── Table Card ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.08 }}
+        style={{
+          background: "rgba(255,255,255,0.8)",
+          backdropFilter: "blur(16px)",
+          border: "1px solid rgba(255,255,255,0.9)",
+          borderRadius: 18,
+          overflow: "hidden",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
+        }}
+      >
+        <div
+          style={{
+            padding: "18px 24px",
+            borderBottom: "1px solid #f1f5f9",
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+          }}
+        >
+          <Calendar size={18} color="#0d9488" />
+          <h3
+            style={{ fontWeight: 700, color: "#1e293b", fontSize: "0.95rem" }}
+          >
+            Appointments
           </h3>
+          <span
+            style={{
+              background: "#0d9488",
+              color: "white",
+              borderRadius: 20,
+              fontSize: "0.65rem",
+              fontWeight: 800,
+              padding: "2px 8px",
+            }}
+          >
+            {filtered?.length || 0}
+          </span>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        <div style={{ overflowX: "auto" }}>
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              fontSize: "0.875rem",
+            }}
+          >
             <thead>
-              <tr className="bg-slate-50/50">
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  Date & Time
-                </th>
-                {user?.role !== "Patient" && (
-                  <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    Patient Details
-                  </th>
-                )}
-                {user?.role !== "Doctor" && (
-                  <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    Assigned Doctor
-                  </th>
-                )}
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
-                  Actions
-                </th>
+              <tr style={{ background: "#f8fafc" }}>
+                <th style={thStyle}>Date & Time</th>
+                {user?.role !== "Patient" && <th style={thStyle}>Patient</th>}
+                {user?.role !== "Doctor" && <th style={thStyle}>Doctor</th>}
+                <th style={thStyle}>Status</th>
+                <th style={{ ...thStyle, textAlign: "right" }}>Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
-              {appointments?.map((appt) => (
-                <tr
-                  key={appt._id}
-                  className="hover:bg-slate-50/80 transition-colors group"
-                >
-                  <td className="p-4">
-                    <div className="flex flex-col">
-                      <span className="font-bold text-slate-800">
+            <tbody>
+              {filtered?.map((appt) => {
+                const sc = STATUS_SC[appt.status] || STATUS_SC.Scheduled;
+                return (
+                  <tr
+                    key={appt._id}
+                    style={{
+                      borderTop: "1px solid #f1f5f9",
+                      transition: "background 0.15s",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.background = "#f8fafc88")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.background = "transparent")
+                    }
+                  >
+                    <td style={tdStyle}>
+                      <p style={{ fontWeight: 700, color: "#1e293b" }}>
                         {dayjs(appt.date).format("MMM DD, YYYY")}
-                      </span>
-                      <span className="text-sm text-slate-500 flex items-center gap-1 mt-0.5">
-                        <Clock size={12} /> {dayjs(appt.date).format("hh:mm A")}
-                      </span>
-                    </div>
-                  </td>
-
-                  {user?.role !== "Patient" && (
-                    <td className="p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700">
-                          <User size={14} />
-                        </div>
-                        <div>
-                          <span className="font-semibold text-slate-800 block">
-                            {appt.patientId?.name || "Unknown"}
-                          </span>
-                          <span className="text-xs text-slate-400">
-                            {appt.patientId?.contact}
-                          </span>
-                        </div>
-                      </div>
+                      </p>
+                      <p
+                        style={{
+                          fontSize: "0.72rem",
+                          color: "#94a3b8",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 4,
+                          marginTop: 2,
+                        }}
+                      >
+                        <Clock size={11} /> {dayjs(appt.date).format("hh:mm A")}
+                      </p>
                     </td>
-                  )}
-
-                  {user?.role !== "Doctor" && (
-                    <td className="p-4">
-                      <div className="text-sm text-slate-800 font-medium">
+                    {user?.role !== "Patient" && (
+                      <td style={tdStyle}>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 10,
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: 32,
+                              height: 32,
+                              borderRadius: 9,
+                              background:
+                                "linear-gradient(135deg, #3b82f6, #818cf8)",
+                              color: "white",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontWeight: 800,
+                              fontSize: "0.8rem",
+                              flexShrink: 0,
+                            }}
+                          >
+                            {appt.patientId?.name?.charAt(0) || "P"}
+                          </div>
+                          <div>
+                            <p style={{ fontWeight: 600, color: "#1e293b" }}>
+                              {appt.patientId?.name || "Unknown"}
+                            </p>
+                            <p
+                              style={{ fontSize: "0.72rem", color: "#94a3b8" }}
+                            >
+                              {appt.patientId?.contact}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                    )}
+                    {user?.role !== "Doctor" && (
+                      <td
+                        style={{
+                          ...tdStyle,
+                          color: "#475569",
+                          fontWeight: 500,
+                        }}
+                      >
                         Dr.{" "}
                         {appt.doctorId?.fullname?.split(" ")[1] ||
                           appt.doctorId?.fullname ||
                           "Unassigned"}
-                      </div>
-                    </td>
-                  )}
-
-                  <td className="p-4">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border ${getStatusStyle(appt.status)}`}
-                    >
-                      {getStatusIcon(appt.status)}
-                      {appt.status}
-                    </span>
-                  </td>
-
-                  <td className="p-4 text-right">
-                    {user?.role !== "Patient" && appt.status === "Scheduled" ? (
-                      <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button className="text-xs font-medium text-teal-600 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-md transition-colors">
-                          Complete
-                        </button>
-                        <button className="text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-md transition-colors">
-                          Cancel
-                        </button>
-                      </div>
-                    ) : (
-                      <button className="text-sm font-medium text-indigo-600 hover:underline">
-                        View Details
-                      </button>
+                      </td>
                     )}
-                  </td>
-                </tr>
-              ))}
-
-              {(!appointments || appointments.length === 0) && (
+                    <td style={tdStyle}>
+                      <span
+                        style={{
+                          padding: "4px 12px",
+                          borderRadius: 999,
+                          fontSize: "0.7rem",
+                          fontWeight: 700,
+                          background: sc.bg,
+                          color: sc.color,
+                          border: `1px solid ${sc.border}`,
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 5,
+                        }}
+                      >
+                        {appt.status === "Completed" && (
+                          <CheckCircle2 size={11} />
+                        )}
+                        {appt.status === "Cancelled" && <XCircle size={11} />}
+                        {appt.status === "Scheduled" && <Clock size={11} />}
+                        {appt.status}
+                      </span>
+                    </td>
+                    <td style={{ ...tdStyle, textAlign: "right" }}>
+                      {user?.role !== "Patient" &&
+                      appt.status === "Scheduled" ? (
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "flex-end",
+                            gap: 6,
+                          }}
+                        >
+                          <button
+                            style={{
+                              padding: "5px 12px",
+                              borderRadius: 8,
+                              border: "1px solid #a7f3d0",
+                              background: "#ecfdf5",
+                              color: "#059669",
+                              fontSize: "0.72rem",
+                              fontWeight: 700,
+                              cursor: "pointer",
+                              fontFamily: "inherit",
+                            }}
+                          >
+                            Complete
+                          </button>
+                          <button
+                            style={{
+                              padding: "5px 12px",
+                              borderRadius: 8,
+                              border: "1px solid #fecaca",
+                              background: "#fef2f2",
+                              color: "#dc2626",
+                              fontSize: "0.72rem",
+                              fontWeight: 700,
+                              cursor: "pointer",
+                              fontFamily: "inherit",
+                            }}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <span
+                          style={{
+                            fontSize: "0.78rem",
+                            fontWeight: 600,
+                            color: "#0d9488",
+                            cursor: "pointer",
+                          }}
+                        >
+                          View →
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+              {(!filtered || filtered.length === 0) && (
                 <tr>
-                  <td colSpan="5" className="p-12 text-center text-slate-500">
-                    <div className="flex flex-col items-center justify-center">
-                      <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                        <Calendar size={32} className="text-slate-300" />
-                      </div>
-                      <p className="text-lg font-medium text-slate-600">
-                        No appointments scheduled
-                      </p>
-                      <p className="text-sm text-slate-400 mt-1">
-                        Your schedule is currently clear.
-                      </p>
-                    </div>
+                  <td
+                    colSpan={5}
+                    style={{ padding: "48px", textAlign: "center" }}
+                  >
+                    <Calendar
+                      size={40}
+                      style={{ margin: "0 auto 12px", color: "#e2e8f0" }}
+                    />
+                    <p style={{ fontWeight: 700, color: "#64748b" }}>
+                      No appointments found
+                    </p>
+                    <p
+                      style={{
+                        fontSize: "0.8rem",
+                        color: "#94a3b8",
+                        marginTop: 4,
+                      }}
+                    >
+                      Your schedule is currently clear.
+                    </p>
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
+
+const thStyle = {
+  padding: "11px 22px",
+  textAlign: "left",
+  fontSize: "0.65rem",
+  fontWeight: 700,
+  color: "#94a3b8",
+  letterSpacing: "0.07em",
+};
+const tdStyle = { padding: "13px 22px" };
 
 export default AppointmentsList;

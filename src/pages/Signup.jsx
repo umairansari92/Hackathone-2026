@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { signup, reset } from "../store/userSlice";
-import { Stethoscope, UserPlus, Eye, EyeOff } from "lucide-react";
+import { Stethoscope, Eye, EyeOff, UserPlus, Camera } from "lucide-react";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +13,7 @@ const Signup = () => {
     role: "Patient",
   });
   const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
 
   const { fullname, email, password, gender, role } = formData;
@@ -25,24 +26,25 @@ const Signup = () => {
   );
 
   useEffect(() => {
-    if (isError) {
-      console.error(message);
-    }
-    if (isSuccess || user) {
-      navigate("/");
-    }
+    if (isError) console.error(message);
+    if (isSuccess || user) navigate("/");
     dispatch(reset());
   }, [user, isError, isSuccess, message, navigate, dispatch]);
 
-  const onChange = (e) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }));
-  };
+  const onChange = (e) =>
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   const onFileChange = (e) => {
-    setImage(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setImagePreview(reader.result);
+      reader.readAsDataURL(file);
+    } else {
+      setImage(null);
+      setImagePreview(null);
+    }
   };
 
   const onSubmit = (e) => {
@@ -54,198 +56,520 @@ const Signup = () => {
     userData.append("gender", gender);
     userData.append("role", role);
     if (image) userData.append("image", image);
-
     dispatch(signup(userData));
   };
 
-  return (
-    <div className="min-h-screen flex w-full font-sans">
-      {/* Left Column - Branding */}
-      <div className="hidden lg:flex flex-col flex-1 bg-gradient-to-br from-teal-500 to-blue-500 relative overflow-hidden items-center justify-center p-12 text-center text-white">
-        <div className="absolute top-10 left-10 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 right-10 w-80 h-80 bg-blue-900/20 rounded-full blur-3xl"></div>
+  /* ── shared input style ── */
+  const inputStyle = {
+    width: "100%",
+    padding: "0.7rem 1rem",
+    border: "1.5px solid #e2e8f0",
+    borderRadius: 10,
+    fontSize: "0.95rem",
+    color: "#1e293b",
+    fontFamily: "inherit",
+    outline: "none",
+    boxSizing: "border-box",
+    background: "#f8fafc",
+    transition: "border-color 0.2s",
+  };
 
-        <div className="relative z-10 flex flex-col items-center max-w-md">
-          <div className="bg-white/20 p-4 rounded-2xl backdrop-blur-sm mb-6 shadow-xl">
-            <Stethoscope size={48} className="text-white" />
+  const labelStyle = {
+    display: "block",
+    fontSize: "0.875rem",
+    fontWeight: 600,
+    color: "#374151",
+    marginBottom: 6,
+  };
+
+  return (
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        width: "100%",
+        fontFamily: "'Outfit', sans-serif",
+      }}
+    >
+      {/* ── LEFT PANEL – Teal gradient ──────────────────────────────────── */}
+      <div
+        style={{
+          flex: 1,
+          background: "linear-gradient(135deg, #0d9488 0%, #38bdf8 100%)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "3rem",
+          textAlign: "center",
+          color: "white",
+          position: "relative",
+          overflow: "hidden",
+        }}
+        className="hidden lg:flex"
+      >
+        {/* Decorative circles */}
+        <div
+          style={{
+            position: "absolute",
+            top: -60,
+            left: -60,
+            width: 280,
+            height: 280,
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.1)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            bottom: -80,
+            right: -60,
+            width: 360,
+            height: 360,
+            borderRadius: "50%",
+            background: "rgba(0,0,0,0.08)",
+          }}
+        />
+
+        <div style={{ position: "relative", zIndex: 1, maxWidth: 340 }}>
+          {/* Stethoscope icon box */}
+          <div
+            style={{
+              width: 80,
+              height: 80,
+              background: "rgba(255,255,255,0.2)",
+              borderRadius: 20,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto 2rem",
+              backdropFilter: "blur(8px)",
+              boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
+            }}
+          >
+            <Stethoscope size={40} color="white" />
           </div>
-          <h1 className="text-4xl font-bold mb-4 tracking-tight">
-            MedClinic AI
+
+          <h1
+            style={{
+              fontSize: "2.4rem",
+              fontWeight: 800,
+              marginBottom: "1rem",
+              letterSpacing: "-0.5px",
+            }}
+          >
+            Al Shifa Hospital
           </h1>
-          <p className="text-teal-50 text-lg mb-12 leading-relaxed">
-            Join the future of healthcare. AI-powered management for modern
-            clinics.
+          <p
+            style={{
+              fontSize: "1rem",
+              lineHeight: 1.6,
+              color: "rgba(255,255,255,0.85)",
+              marginBottom: "3rem",
+            }}
+          >
+            Join thousands of healthcare professionals using AI-powered tools to
+            deliver smarter patient care.
           </p>
 
-          <div className="grid grid-cols-3 gap-8 w-full border-t border-white/20 pt-8">
-            <div>
-              <h3 className="text-2xl font-bold mb-1">1200+</h3>
-              <p className="text-xs text-teal-100 uppercase tracking-wider">
-                Patients
-              </p>
-            </div>
-            <div>
-              <h3 className="text-2xl font-bold mb-1">98%</h3>
-              <p className="text-xs text-teal-100 uppercase tracking-wider">
-                Accuracy
-              </p>
-            </div>
-            <div>
-              <h3 className="text-2xl font-bold mb-1">4 Roles</h3>
-              <p className="text-xs text-teal-100 uppercase tracking-wider">
-                RBAC
-              </p>
-            </div>
+          {/* Feature stats row */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr 1fr",
+              gap: "1.5rem",
+              borderTop: "1px solid rgba(255,255,255,0.25)",
+              paddingTop: "2rem",
+            }}
+          >
+            {[
+              { value: "1200+", label: "Patients" },
+              { value: "98%", label: "Accuracy" },
+              { value: "4 Roles", label: "RBAC" },
+            ].map(({ value, label }) => (
+              <div key={label}>
+                <div
+                  style={{
+                    fontSize: "1.6rem",
+                    fontWeight: 700,
+                    marginBottom: 4,
+                  }}
+                >
+                  {value}
+                </div>
+                <div
+                  style={{
+                    fontSize: "0.7rem",
+                    color: "rgba(255,255,255,0.7)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                  }}
+                >
+                  {label}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Right Column - Signup Form */}
-      <div className="flex-1 flex flex-col justify-center items-center bg-white p-8 sm:p-12 relative overflow-y-auto">
-        <div className="w-full max-w-lg space-y-6">
-          <div>
-            <h2 className="text-3xl font-bold text-slate-800 tracking-tight">
-              Create Account
+      {/* ── RIGHT PANEL – Signup Form ────────────────────────────────────── */}
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#ffffff",
+          padding: "3rem 2rem",
+          overflowY: "auto",
+        }}
+      >
+        <div style={{ width: "100%", maxWidth: 460 }}>
+          {/* Heading */}
+          <div style={{ marginBottom: "1.75rem" }}>
+            <h2
+              style={{
+                fontSize: "1.75rem",
+                fontWeight: 700,
+                color: "#1e293b",
+                marginBottom: 6,
+              }}
+            >
+              Create your account
             </h2>
-            <p className="text-slate-500 mt-2 text-sm">
-              Fill in the details below to register.
+            <p style={{ color: "#64748b", fontSize: "0.9rem" }}>
+              Set up your profile to get started with Al Shifa Hospital
             </p>
           </div>
 
+          {/* Error banner */}
           {isError && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm font-medium border border-red-100">
-              {message}
+            <div
+              style={{
+                background: "#fef2f2",
+                border: "1px solid #fecaca",
+                color: "#dc2626",
+                borderRadius: 10,
+                padding: "0.75rem 1rem",
+                fontSize: "0.875rem",
+                marginBottom: "1.5rem",
+              }}
+            >
+              {message || "Something went wrong. Please try again."}
             </div>
           )}
 
-          <form onSubmit={onSubmit} className="space-y-5">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  name="fullname"
-                  value={fullname}
-                  onChange={onChange}
-                  className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                  placeholder="John Doe"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={email}
-                  onChange={onChange}
-                  className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                  placeholder="john@example.com"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Password
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={password}
-                    onChange={onChange}
-                    className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                    placeholder="••••••••"
-                    required
-                    minLength="6"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600"
-                  >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </button>
+          <form onSubmit={onSubmit}>
+            {/* Avatar Upload */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                marginBottom: "1.5rem",
+              }}
+            >
+              <div style={{ position: "relative", cursor: "pointer" }}>
+                <div
+                  style={{
+                    width: 88,
+                    height: 88,
+                    borderRadius: "50%",
+                    border: imagePreview
+                      ? "3px solid #0d9488"
+                      : "2.5px dashed #cbd5e1",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    overflow: "hidden",
+                    background: "#f8fafc",
+                    transition: "border-color 0.2s",
+                  }}
+                >
+                  {imagePreview ? (
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  ) : (
+                    <Camera size={28} color="#94a3b8" />
+                  )}
                 </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Gender
-                </label>
-                <select
-                  name="gender"
-                  value={gender}
-                  onChange={onChange}
-                  className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all bg-white"
-                >
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Account Role
-                </label>
-                <select
-                  name="role"
-                  value={role}
-                  onChange={onChange}
-                  className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all bg-white font-medium text-teal-700"
-                >
-                  <option value="Patient">Patient</option>
-                  <option value="Doctor">Doctor</option>
-                  <option value="Receptionist">Receptionist</option>
-                  <option value="Admin">Admin</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Profile Photo (Optional)
-                </label>
                 <input
                   type="file"
                   name="image"
                   accept="image/*"
                   onChange={onFileChange}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all text-sm file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100"
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    opacity: 0,
+                    cursor: "pointer",
+                    zIndex: 10,
+                  }}
                 />
+              </div>
+              <p
+                style={{ fontSize: "0.75rem", color: "#94a3b8", marginTop: 8 }}
+              >
+                {imagePreview
+                  ? "Tap to change photo"
+                  : "Upload profile photo (optional)"}
+              </p>
+            </div>
+
+            {/* Full Name */}
+            <div style={{ marginBottom: "1.25rem" }}>
+              <label style={labelStyle}>Full Name</label>
+              <input
+                type="text"
+                name="fullname"
+                value={fullname}
+                onChange={onChange}
+                required
+                placeholder="e.g. Dr. Sarah Khan"
+                style={inputStyle}
+                onFocus={(e) => (e.target.style.borderColor = "#0d9488")}
+                onBlur={(e) => (e.target.style.borderColor = "#e2e8f0")}
+              />
+            </div>
+
+            {/* Email */}
+            <div style={{ marginBottom: "1.25rem" }}>
+              <label style={labelStyle}>Email Address</label>
+              <input
+                type="email"
+                name="email"
+                value={email}
+                onChange={onChange}
+                required
+                placeholder="sarah@medclinic.com"
+                style={inputStyle}
+                onFocus={(e) => (e.target.style.borderColor = "#0d9488")}
+                onBlur={(e) => (e.target.style.borderColor = "#e2e8f0")}
+              />
+            </div>
+
+            {/* Password */}
+            <div style={{ marginBottom: "1.25rem" }}>
+              <label style={labelStyle}>Password</label>
+              <div style={{ position: "relative" }}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={password}
+                  onChange={onChange}
+                  required
+                  minLength="6"
+                  placeholder="Minimum 6 characters"
+                  style={{ ...inputStyle, paddingRight: "3rem" }}
+                  onFocus={(e) => (e.target.style.borderColor = "#0d9488")}
+                  onBlur={(e) => (e.target.style.borderColor = "#e2e8f0")}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((p) => !p)}
+                  style={{
+                    position: "absolute",
+                    right: 12,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    color: "#94a3b8",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
               </div>
             </div>
 
+            {/* Gender + Role in 2 cols */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "1rem",
+                marginBottom: "1.75rem",
+              }}
+            >
+              {/* Gender */}
+              <div>
+                <label style={labelStyle}>Gender</label>
+                <div style={{ position: "relative" }}>
+                  <select
+                    name="gender"
+                    value={gender}
+                    onChange={onChange}
+                    style={{
+                      ...inputStyle,
+                      paddingRight: "2.5rem",
+                      appearance: "none",
+                      cursor: "pointer",
+                    }}
+                    onFocus={(e) => (e.target.style.borderColor = "#0d9488")}
+                    onBlur={(e) => (e.target.style.borderColor = "#e2e8f0")}
+                  >
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <div
+                    style={{
+                      position: "absolute",
+                      right: 10,
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      pointerEvents: "none",
+                      color: "#94a3b8",
+                    }}
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Role */}
+              <div>
+                <label style={labelStyle}>Account Role</label>
+                <div style={{ position: "relative" }}>
+                  <select
+                    name="role"
+                    value={role}
+                    onChange={onChange}
+                    style={{
+                      ...inputStyle,
+                      paddingRight: "2.5rem",
+                      appearance: "none",
+                      cursor: "pointer",
+                      color: "#0d9488",
+                      fontWeight: 700,
+                    }}
+                    onFocus={(e) => (e.target.style.borderColor = "#0d9488")}
+                    onBlur={(e) => (e.target.style.borderColor = "#e2e8f0")}
+                  >
+                    <option value="Patient">Patient</option>
+                    <option value="Doctor">Doctor</option>
+                    <option value="Receptionist">Receptionist</option>
+                    <option value="Admin">Admin</option>
+                  </select>
+                  <div
+                    style={{
+                      position: "absolute",
+                      right: 10,
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      pointerEvents: "none",
+                      color: "#0d9488",
+                    }}
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Submit button */}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex justify-center items-center gap-2 py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all disabled:opacity-70 disabled:cursor-not-allowed mt-4"
+              style={{
+                width: "100%",
+                padding: "0.85rem",
+                background: isLoading ? "#5eada8" : "#0d9488",
+                color: "white",
+                border: "none",
+                borderRadius: 10,
+                fontSize: "1rem",
+                fontWeight: 700,
+                fontFamily: "inherit",
+                cursor: isLoading ? "not-allowed" : "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+                boxShadow: "0 4px 14px rgba(13,148,136,0.35)",
+                transition: "all 0.2s ease",
+              }}
             >
               {isLoading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                <div
+                  style={{
+                    width: 20,
+                    height: 20,
+                    borderRadius: "50%",
+                    border: "3px solid rgba(255,255,255,0.3)",
+                    borderTopColor: "white",
+                    animation: "spin 0.8s linear infinite",
+                  }}
+                />
               ) : (
                 <>
-                  <UserPlus size={18} /> Complete Registration
+                  <UserPlus size={18} />
+                  Create Account
                 </>
               )}
             </button>
           </form>
 
-          <div className="text-center text-sm pt-4 border-t border-slate-100">
-            <span className="text-slate-500">Already have an account? </span>
+          {/* Footer */}
+          <p
+            style={{
+              textAlign: "center",
+              marginTop: "1.5rem",
+              fontSize: "0.875rem",
+              color: "#64748b",
+            }}
+          >
+            Already have an account?{" "}
             <Link
               to="/login"
-              className="text-teal-600 font-semibold hover:text-teal-700 transition-colors"
+              style={{
+                color: "#0d9488",
+                fontWeight: 700,
+                textDecoration: "none",
+              }}
             >
-              Sign In
+              Sign in here
             </Link>
-          </div>
+          </p>
         </div>
       </div>
     </div>

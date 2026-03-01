@@ -1,183 +1,349 @@
-import { useState } from "react";
-import { useSelector } from "react-redux";
-import { useGetPatientsQuery } from "../store/patientApiSlice";
+import { motion } from "framer-motion";
 import {
   Users,
-  UserPlus,
-  Calendar,
+  Clock,
+  CheckCircle2,
+  UserCheck,
   Activity,
-  ChevronRight,
+  Stethoscope,
 } from "lucide-react";
+import { useGetReceptionistDashboardQuery } from "../store/tokenApiSlice";
+import { useGetAllSchedulesQuery } from "../store/scheduleApiSlice";
 import { Link } from "react-router-dom";
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.08, duration: 0.38 },
+  }),
+};
+
+const StatCard = ({ title, value, icon, color, bg, i }) => (
+  <motion.div
+    custom={i}
+    initial="hidden"
+    animate="visible"
+    variants={fadeUp}
+    style={{
+      background: "rgba(255,255,255,0.75)",
+      backdropFilter: "blur(16px)",
+      border: "1px solid rgba(255,255,255,0.9)",
+      borderRadius: 18,
+      padding: "18px 22px",
+      boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: 12,
+    }}
+  >
+    <div>
+      <p
+        style={{
+          fontSize: "0.68rem",
+          fontWeight: 700,
+          color: "#94a3b8",
+          textTransform: "uppercase",
+          letterSpacing: "0.07em",
+          marginBottom: 6,
+        }}
+      >
+        {title}
+      </p>
+      <h4
+        style={{
+          fontSize: "2.2rem",
+          fontWeight: 800,
+          color: "#0f172a",
+          lineHeight: 1,
+        }}
+      >
+        {value ?? 0}
+      </h4>
+    </div>
+    <div
+      style={{
+        width: 46,
+        height: 46,
+        borderRadius: 12,
+        background: bg,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexShrink: 0,
+        boxShadow: `0 4px 12px ${bg}55`,
+      }}
+    >
+      {icon}
+    </div>
+  </motion.div>
+);
+
 const ReceptionistDashboard = () => {
-  const { data: patients, isLoading } = useGetPatientsQuery();
-  const { user } = useSelector((state) => state.auth);
-  const [showAddPatientModal, setShowAddPatientModal] = useState(false);
+  const { data: dash, isLoading } = useGetReceptionistDashboardQuery(
+    undefined,
+    { pollingInterval: 30000 },
+  );
+  const { data: schedules = [] } = useGetAllSchedulesQuery();
 
   if (isLoading)
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500"></div>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "60vh",
+        }}
+      >
+        <div
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
+            border: "3px solid #e2e8f0",
+            borderTopColor: "#0d9488",
+            animation: "spin 0.9s linear infinite",
+          }}
+        />
       </div>
     );
 
   return (
-    <div className="space-y-6 pb-8 bg-[#f8fafc] min-h-screen">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-slate-800 tracking-tight">
-            Dashboard
-          </h2>
-          <p className="text-slate-500 mt-1 text-sm">
-            Welcome back, {user?.fullname || "Receptionist"} — here's today's
-            overview
-          </p>
-        </div>
-      </div>
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard
-          title="Total Registered"
-          value={patients?.length || 1248}
-          icon={<Users size={20} />}
-          bg="bg-teal-500"
-          trend="+12% from last month"
-          trendColor="text-emerald-500"
-        />
-        <StatCard
-          title="Today's Appointments"
-          value="18"
-          icon={<Calendar size={20} />}
-          bg="bg-blue-500"
-          trend="8 remaining"
-          trendColor="text-slate-500"
-        />
-        <StatCard
-          title="Active Doctors"
-          value="4"
-          icon={<Activity size={20} />}
-          bg="bg-emerald-500"
-          trend="On duty"
-          trendColor="text-emerald-500"
-        />
-        <div
-          className="bg-white rounded-2xl shadow-sm border border-slate-100/60 p-6 flex flex-col justify-center items-center hover:shadow-md transition-shadow hover:border-teal-300 group cursor-pointer"
-          onClick={() => setShowAddPatientModal(true)}
+    <div style={{ fontFamily: "'Outfit', sans-serif", paddingBottom: 40 }}>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={fadeUp}
+        style={{ marginBottom: 26 }}
+      >
+        <h2
+          style={{
+            fontSize: "1.6rem",
+            fontWeight: 800,
+            color: "#0f172a",
+            marginBottom: 4,
+          }}
         >
-          <div className="w-12 h-12 rounded-full bg-teal-50 flex items-center justify-center mb-2 group-hover:bg-teal-500 group-hover:text-white transition-colors text-teal-600">
-            <UserPlus size={24} />
-          </div>
-          <p className="text-sm font-bold text-slate-700">
-            Register New Patient
-          </p>
-        </div>
+          Receptionist Dashboard
+        </h2>
+        <p style={{ color: "#64748b", fontSize: "0.875rem" }}>
+          {new Date().toLocaleDateString("en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </p>
+      </motion.div>
+
+      {/* Stats */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
+          gap: 14,
+          marginBottom: 24,
+        }}
+      >
+        <StatCard
+          i={1}
+          title="Total Today"
+          value={dash?.totalToday}
+          icon={<Activity size={20} color="#fff" />}
+          bg="#0d9488"
+        />
+        <StatCard
+          i={2}
+          title="Waiting"
+          value={dash?.waiting}
+          icon={<Clock size={20} color="#fff" />}
+          bg="#f59e0b"
+        />
+        <StatCard
+          i={3}
+          title="Being Served"
+          value={dash?.serving}
+          icon={<UserCheck size={20} color="#fff" />}
+          bg="#3b82f6"
+        />
+        <StatCard
+          i={4}
+          title="Completed"
+          value={dash?.completed}
+          icon={<CheckCircle2 size={20} color="#fff" />}
+          bg="#10b981"
+        />
       </div>
 
-      {/* Main Table Section exactly matching mockup style */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100/60 overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
-          <h3 className="text-sm font-semibold text-slate-800">
-            Recent Patient Registry
-          </h3>
-          <Link
-            to="/patients"
-            className="text-sm text-slate-400 hover:text-slate-600 font-medium flex items-center"
-          >
-            View Directory <ChevronRight size={16} />
-          </Link>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm whitespace-nowrap">
-            <thead className="text-[10px] text-slate-400 font-medium uppercase tracking-wider bg-slate-50/50 border-b border-slate-100">
-              <tr>
-                <th className="px-6 py-4">Patient Name</th>
-                <th className="px-6 py-4">Demographics</th>
-                <th className="px-6 py-4">Contact</th>
-                <th className="px-6 py-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50">
-              {patients?.slice(0, 5).map((patient) => (
-                <tr
-                  key={patient._id}
-                  className="hover:bg-slate-50/50 transition-colors"
-                >
-                  <td className="px-6 py-4 font-bold text-slate-700">
-                    {patient.name}
-                  </td>
-                  <td className="px-6 py-4 text-slate-500">
-                    <span className="mr-2">{patient.age} yrs</span>
-                    <span>{patient.gender}</span>
-                  </td>
-                  <td className="px-6 py-4 text-slate-500 font-medium">
-                    {patient.contact}
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <span className="px-3 py-1 text-[10px] font-bold rounded-full border border-teal-200 bg-teal-50 text-teal-700 cursor-pointer hover:bg-teal-500 hover:text-white transition-colors">
-                      Book Appt
-                    </span>
-                  </td>
-                </tr>
-              ))}
-              {(!patients || patients.length === 0) && (
-                <tr>
-                  <td
-                    colSpan="4"
-                    className="px-6 py-8 text-center text-slate-500"
-                  >
-                    No patients registered yet. Add a new patient.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Simplified Modal */}
-      {showAddPatientModal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white p-8 rounded-2xl w-full max-w-md shadow-2xl transform scale-100 transition-transform">
-            <h3 className="text-2xl font-bold mb-2 text-slate-800">
-              Register Patient
-            </h3>
-            <p className="text-sm text-slate-500 mb-6">
-              This triggers the full form in the actual app.
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setShowAddPatientModal(false)}
-                className="px-5 py-2.5 bg-slate-100 text-slate-700 font-medium rounded-lg hover:bg-slate-200 transition-colors"
+      {/* Quick Actions */}
+      <motion.div
+        custom={5}
+        initial="hidden"
+        animate="visible"
+        variants={fadeUp}
+        style={{ marginBottom: 24 }}
+      >
+        <h3
+          style={{
+            fontSize: "0.9rem",
+            fontWeight: 700,
+            color: "#1e293b",
+            marginBottom: 12,
+          }}
+        >
+          Quick Actions
+        </h3>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
+            gap: 12,
+          }}
+        >
+          {[
+            {
+              label: "Generate Token",
+              to: "/book-appointment",
+              color: "#0d9488",
+              bg: "#ecfdf5",
+            },
+            {
+              label: "View Queue",
+              to: "/token-queue",
+              color: "#3b82f6",
+              bg: "#eff6ff",
+            },
+            {
+              label: "Patients List",
+              to: "/patients",
+              color: "#6366f1",
+              bg: "#f5f3ff",
+            },
+            {
+              label: "Appointments",
+              to: "/appointments",
+              color: "#f59e0b",
+              bg: "#fffbeb",
+            },
+          ].map(({ label, to, color, bg }) => (
+            <Link key={to} to={to} style={{ textDecoration: "none" }}>
+              <div
+                style={{
+                  background: bg,
+                  border: `1.5px solid ${color}22`,
+                  borderRadius: 14,
+                  padding: "14px 16px",
+                  textAlign: "center",
+                  cursor: "pointer",
+                  fontWeight: 700,
+                  fontSize: "0.875rem",
+                  color,
+                  transition: "transform 0.15s ease",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.transform = "translateY(-2px)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.transform = "translateY(0)")
+                }
               >
-                Close
-              </button>
-            </div>
-          </div>
+                {label}
+              </div>
+            </Link>
+          ))}
         </div>
-      )}
+      </motion.div>
+
+      {/* Doctor Availability */}
+      <motion.div
+        custom={6}
+        initial="hidden"
+        animate="visible"
+        variants={fadeUp}
+        style={{
+          background: "rgba(255,255,255,0.75)",
+          backdropFilter: "blur(16px)",
+          border: "1px solid rgba(255,255,255,0.9)",
+          borderRadius: 18,
+          overflow: "hidden",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
+        }}
+      >
+        <div
+          style={{
+            padding: "16px 22px",
+            borderBottom: "1px solid #f1f5f9",
+            fontWeight: 700,
+            fontSize: "0.9rem",
+            color: "#1e293b",
+            display: "flex",
+            alignItems: "center",
+            gap: 7,
+          }}
+        >
+          <Stethoscope size={16} color="#0d9488" /> Doctor Availability Today
+        </div>
+        <div style={{ padding: "8px 0" }}>
+          {(dash?.doctorAvailability || []).length === 0 && (
+            <p
+              style={{
+                padding: "20px 22px",
+                color: "#94a3b8",
+                fontSize: "0.875rem",
+              }}
+            >
+              No schedules configured yet. Admin needs to set up doctor
+              schedules.
+            </p>
+          )}
+          {(dash?.doctorAvailability || []).map((d, i) => (
+            <div
+              key={i}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "12px 22px",
+                borderBottom: "1px solid #f8fafc",
+              }}
+            >
+              <div>
+                <p
+                  style={{
+                    fontWeight: 700,
+                    color: "#1e293b",
+                    fontSize: "0.875rem",
+                  }}
+                >
+                  {d.doctor?.fullname || "—"}
+                </p>
+                <p style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
+                  {d.doctor?.specialization || "Doctor"}
+                </p>
+              </div>
+              <span
+                style={{
+                  padding: "4px 12px",
+                  borderRadius: 999,
+                  fontSize: "0.72rem",
+                  fontWeight: 700,
+                  background: d.available ? "#ecfdf5" : "#fef2f2",
+                  color: d.available ? "#059669" : "#dc2626",
+                  border: `1px solid ${d.available ? "#a7f3d0" : "#fecaca"}`,
+                }}
+              >
+                {d.available ? "Available" : d.reason || "Unavailable"}
+              </span>
+            </div>
+          ))}
+        </div>
+      </motion.div>
     </div>
   );
 };
-
-const StatCard = ({ title, value, icon, bg, trend, trendColor }) => (
-  <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100/60 hover:shadow-md transition-shadow flex justify-between items-center">
-    <div>
-      <p className="text-xs font-semibold text-slate-400 mb-1">{title}</p>
-      <h4 className="text-3xl font-bold text-slate-800 mb-1 tracking-tight">
-        {value}
-      </h4>
-      <p className={`text-xs font-medium ${trendColor}`}>{trend}</p>
-    </div>
-    <div
-      className={`${bg} w-12 h-12 flex items-center justify-center rounded-xl text-white shadow-sm shrink-0`}
-    >
-      {icon}
-    </div>
-  </div>
-);
 
 export default ReceptionistDashboard;

@@ -12,7 +12,7 @@ const Layout = () => {
         {/* Top Header Placeholder */}
         <header className="bg-white shadow-sm h-16 shrink-0 flex items-center px-8 z-10">
           <h1 className="text-xl font-semibold text-slate-800">
-            AI Clinic Management Platform
+            Al Shifa Hospital
           </h1>
         </header>
 

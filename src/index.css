@@ -20,7 +20,7 @@
 
 body {
   font-family: "Outfit", sans-serif;
-  background-color: var(--bg-dark);
+  background-color: #f8fafc;
 }
 
 .auth-container {
