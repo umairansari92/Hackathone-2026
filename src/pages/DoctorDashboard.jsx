@@ -1,4 +1,5 @@
 import { useGetStatsQuery } from "../store/analyticsApiSlice";
+import { useGetAppointmentsQuery } from "../store/appointmentApiSlice";
 import { useSelector } from "react-redux";
 import {
   Users,
@@ -12,6 +13,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import dayjs from "dayjs";
 
 /* ── Static schedule data ────────────────────────────── */
 const STATIC_SCHEDULE = [
@@ -130,7 +132,33 @@ const StatCard = ({ title, value, icon, gradient, trend, trendUp, delay }) => (
 /* ── Main Component ──────────────────────────────────── */
 const DoctorDashboard = () => {
   const { data: stats, isLoading } = useGetStatsQuery();
+  const { data: appointments = [] } = useGetAppointmentsQuery();
   const { user } = useSelector((state) => state.auth);
+
+  // Filter to today's appointments
+  const todayStr = dayjs().format("YYYY-MM-DD");
+  const todayAppts = appointments.filter(
+    (a) => dayjs(a.date).format("YYYY-MM-DD") === todayStr,
+  );
+
+  // Status styling map
+  const STATUS_SC = {
+    Completed: { bg: "#ecfdf5", color: "#059669", border: "#a7f3d0" },
+    Scheduled: { bg: "#eff6ff", color: "#2563eb", border: "#bfdbfe" },
+    Cancelled: { bg: "#fef2f2", color: "#dc2626", border: "#fecaca" },
+  };
+
+  // Fallback to static data if no real data yet
+  const scheduleRows =
+    todayAppts.length > 0
+      ? todayAppts.map((a) => ({
+          patient: a.patientId?.name || "Patient",
+          time: dayjs(a.date).format("hh:mm A"),
+          type: a.type || "Consultation",
+          status: a.status || "Scheduled",
+          sc: STATUS_SC[a.status] || STATUS_SC.Scheduled,
+        }))
+      : STATIC_SCHEDULE;
 
   if (isLoading)
     return (
@@ -555,7 +583,7 @@ const DoctorDashboard = () => {
                 padding: "2px 8px",
               }}
             >
-              {STATIC_SCHEDULE.length}
+              {scheduleRows.length}
             </span>
           </div>
           <Link
@@ -603,7 +631,7 @@ const DoctorDashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {STATIC_SCHEDULE.map((item, idx) => (
+              {scheduleRows.map((item, idx) => (
                 <tr
                   key={idx}
                   style={{

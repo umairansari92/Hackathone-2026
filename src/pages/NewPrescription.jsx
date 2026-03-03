@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { useGetPatientsQuery } from "../store/patientApiSlice";
+import { useCreatePrescriptionMutation } from "../store/prescriptionApiSlice";
 import {
   FileText,
   Plus,
@@ -10,16 +11,23 @@ import {
   Pill,
   ClipboardList,
   ChevronDown,
+  CheckCircle,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 const NewPrescription = () => {
   const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
   const { data: patients, isLoading: patientsLoading } = useGetPatientsQuery();
-  const { register, control, handleSubmit, watch } = useForm({
+  const [createPrescription, { isLoading: saving }] =
+    useCreatePrescriptionMutation();
+  const [savedId, setSavedId] = useState(null);
+  const { register, control, handleSubmit, watch, reset } = useForm({
     defaultValues: {
       medicines: [{ name: "", dosage: "", duration: "" }],
     },
@@ -90,7 +98,48 @@ const NewPrescription = () => {
     doc.save(`Prescription_${patientName.replace(/\s+/g, "_")}.pdf`);
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    // 1. Save to database
+    try {
+      const saved = await createPrescription({
+        patientId: data.patientId,
+        medicines: data.medicines,
+        instructions: data.instructions,
+      }).unwrap();
+      setSavedId(saved._id);
+      toast.success(
+        (t) => (
+          <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <CheckCircle size={16} color="#059669" />
+            <span>
+              Prescription saved!
+              <br />
+              <span
+                style={{
+                  color: "#0d9488",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                }}
+                onClick={() => {
+                  toast.dismiss(t.id);
+                  navigate(`/prescriptions/${saved._id}`);
+                }}
+              >
+                View record →
+              </span>
+            </span>
+          </span>
+        ),
+        { duration: 6000 },
+      );
+    } catch (err) {
+      toast.error(
+        "Failed to save prescription: " +
+          (err?.data?.message || err?.message || "Unknown error"),
+      );
+    }
+    // 2. Always generate local PDF
     generatePDF(data);
   };
 
@@ -600,26 +649,32 @@ const NewPrescription = () => {
           >
             <button
               type="submit"
+              disabled={saving}
               style={{
                 display: "flex",
                 alignItems: "center",
                 gap: 10,
                 padding: "13px 28px",
-                background: "linear-gradient(135deg, #0d9488, #0ea5e9)",
+                background: saving
+                  ? "#a5f3fc"
+                  : "linear-gradient(135deg, #0d9488, #0ea5e9)",
                 color: "white",
                 border: "none",
                 borderRadius: 14,
                 fontWeight: 700,
                 fontSize: "0.95rem",
-                cursor: "pointer",
+                cursor: saving ? "not-allowed" : "pointer",
                 fontFamily: "inherit",
-                boxShadow: "0 6px 20px rgba(13,148,136,0.35)",
+                boxShadow: saving ? "none" : "0 6px 20px rgba(13,148,136,0.35)",
                 transition: "all 0.2s ease",
+                opacity: saving ? 0.8 : 1,
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-1px)";
-                e.currentTarget.style.boxShadow =
-                  "0 10px 28px rgba(13,148,136,0.4)";
+                if (!saving) {
+                  e.currentTarget.style.transform = "translateY(-1px)";
+                  e.currentTarget.style.boxShadow =
+                    "0 10px 28px rgba(13,148,136,0.4)";
+                }
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "translateY(0)";
@@ -627,8 +682,26 @@ const NewPrescription = () => {
                   "0 6px 20px rgba(13,148,136,0.35)";
               }}
             >
-              <Printer size={20} />
-              Generate Prescription PDF
+              {saving ? (
+                <>
+                  <div
+                    style={{
+                      width: 18,
+                      height: 18,
+                      borderRadius: "50%",
+                      border: "2px solid white",
+                      borderTopColor: "transparent",
+                      animation: "spin 0.7s linear infinite",
+                    }}
+                  />
+                  Saving…
+                </>
+              ) : (
+                <>
+                  <Printer size={20} />
+                  Save &amp; Generate PDF
+                </>
+              )}
             </button>
           </motion.div>
         </div>

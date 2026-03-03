@@ -3,13 +3,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
 import {
   RotateCcw,
-  ChevronRight,
   CheckCircle2,
   XCircle,
   Clock,
   UserCheck,
   Printer,
   RefreshCw,
+  Hash,
+  Users,
+  User,
+  Calendar,
 } from "lucide-react";
 import {
   useGetTodayQueueQuery,
@@ -24,6 +27,19 @@ const STATUS_COLOR = {
   Serving: { bg: "#eff6ff", color: "#2563eb", border: "#bfdbfe" },
   Completed: { bg: "#ecfdf5", color: "#059669", border: "#a7f3d0" },
   Cancelled: { bg: "#fef2f2", color: "#dc2626", border: "#fecaca" },
+};
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.06, delayChildren: 0.1 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
 };
 
 const TokenQueue = () => {

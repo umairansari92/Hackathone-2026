@@ -1,6 +1,7 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../store/userSlice";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
   Users,
@@ -16,8 +17,14 @@ import {
   ShieldCheck,
   Ticket,
   Hash,
+  Activity,
+  UserCircle,
 } from "lucide-react";
 
+/**
+ * Premium Sidebar with Glassmorphism and Framer Motion
+ * 🎨 Design tokens: Teal-500, Slate-800, Emerald-400
+ */
 const Sidebar = () => {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -30,218 +37,250 @@ const Sidebar = () => {
   };
 
   const userRole = user?.role || "Patient";
+  const isAdmin = userRole === "Admin";
 
-  // Role-based menu items
+  // Role-based menu items consolidation
   const allMenuItems = [
     {
       title: "Dashboard",
-      icon: <LayoutDashboard size={18} />,
+      icon: <LayoutDashboard size={20} />,
       path: `/${userRole.toLowerCase()}-dashboard`,
       roles: ["Admin", "Doctor", "Receptionist", "Patient"],
     },
-    // Admin-specific
+    // Admin Only
     {
       title: "Manage Doctors",
-      icon: <Stethoscope size={18} />,
+      icon: <Stethoscope size={20} />,
       path: "/manage-doctors",
       roles: ["Admin"],
     },
     {
       title: "Manage Users",
-      icon: <Users size={18} />,
+      icon: <Users size={20} />,
       path: "/manage-users",
       roles: ["Admin"],
     },
+    // Unified Appointments (Role based path)
     {
-      title: "Appointments",
-      icon: <Calendar size={18} />,
-      path: "/appointments",
-      roles: ["Admin"],
+      title: userRole === "Patient" ? "My Appointments" : "Appointments",
+      icon: <Calendar size={20} />,
+      path:
+        userRole === "Patient" ? "/patient/my-appointments" : "/appointments",
+      roles: ["Admin", "Doctor", "Receptionist", "Patient"],
     },
+    // Unified Prescriptions
     {
       title: "Prescriptions",
-      icon: <FileText size={18} />,
+      icon: <FileText size={20} />,
       path: "/prescriptions",
-      roles: ["Admin"],
+      roles: ["Admin", "Doctor", "Patient"],
     },
-    // Receptionist-specific
+    // Patient Search / Patients Directory
+    {
+      title: "Patients Profile",
+      icon: <Users size={20} />,
+      path: "/patients",
+      roles: ["Doctor", "Receptionist"],
+    },
+    // Booking
     {
       title: "Book Appointment",
-      icon: <Ticket size={18} />,
-      path: "/book-appointment",
-      roles: ["Receptionist"],
+      icon: <Ticket size={20} />,
+      path: userRole === "Patient" ? "/patient/book" : "/book-appointment",
+      roles: ["Receptionist", "Patient"],
     },
+    // Queue
     {
-      title: "Token Queue",
-      icon: <Hash size={18} />,
-      path: "/token-queue",
-      roles: ["Receptionist"],
+      title: userRole === "Patient" ? "Queue Status" : "Token Queue",
+      icon: <Hash size={20} />,
+      path: userRole === "Patient" ? "/patient/my-queue" : "/token-queue",
+      roles: ["Receptionist", "Patient"],
     },
+    // Doctor Specific
     {
-      title: "Patients",
-      icon: <Users size={18} />,
-      path: "/patients",
-      roles: ["Receptionist"],
-    },
-    {
-      title: "Appointments",
-      icon: <Calendar size={18} />,
-      path: "/appointments",
-      roles: ["Receptionist"],
+      title: "Smart Diagnosis",
+      icon: <Brain size={20} />,
+      path: "/smart-diagnosis",
+      roles: ["Doctor"],
     },
     {
       title: "Doctor Schedule",
-      icon: <Stethoscope size={18} />,
+      icon: <Stethoscope size={20} />,
       path: "/doctor-schedule",
       roles: ["Receptionist"],
     },
-    // Doctor-specific
+    // Patient Specific
     {
-      title: "Patients",
-      icon: <Users size={18} />,
-      path: "/patients",
-      roles: ["Doctor"],
+      title: "Medical History",
+      icon: <Activity size={20} />,
+      path: "/medical-history",
+      roles: ["Patient"],
     },
     {
-      title: "Appointments",
-      icon: <Calendar size={18} />,
-      path: "/appointments",
-      roles: ["Doctor", "Patient"],
-    },
-    {
-      title: "Prescriptions",
-      icon: <FileText size={18} />,
-      path: "/prescriptions",
-      roles: ["Doctor", "Patient"],
-    },
-    {
-      title: "Smart Diagnosis",
-      icon: <Brain size={18} />,
-      path: "/smart-diagnosis",
-      roles: ["Doctor"],
+      title: "Account Settings",
+      icon: <UserCog size={20} />,
+      path: "/patient-profile",
+      roles: ["Patient"],
     },
   ];
 
   const menuItems = allMenuItems.filter((item) =>
     item.roles.includes(userRole),
   );
-  const isAdmin = userRole === "Admin";
 
   return (
-    <div className="w-64 bg-[#111c22] text-white h-screen flex flex-col transition-all duration-300 shadow-xl overflow-hidden">
-      {/* Brand Header */}
-      <div className="p-5 flex items-center gap-3">
-        <div className="bg-teal-500 p-2 rounded-xl text-white shadow-lg">
-          <Stethoscope size={22} />
-        </div>
-        <div className="flex-1">
-          <h2 className="text-sm font-bold text-white tracking-wide">
-            Al Shifa Hospital
-          </h2>
-          <p className="text-[10px] text-teal-400 font-medium tracking-wider">
-            Smart Diagnosis Platform
-          </p>
-        </div>
-        <button className="text-slate-500 hover:text-white transition-colors">
-          <ChevronLeft size={16} />
-        </button>
-      </div>
+    <motion.div
+      initial={{ x: -280 }}
+      animate={{ x: 0 }}
+      className="w-72 bg-[#0f172a] text-slate-300 h-screen flex flex-col relative z-50 shadow-2xl overflow-hidden border-r border-slate-800/50"
+    >
+      {/* Dynamic Background Glows */}
+      <div className="absolute top-[-10%] left-[-10%] w-64 h-64 bg-teal-500/10 blur-[100px] pointer-events-none rounded-full" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-64 h-64 bg-emerald-500/5 blur-[100px] pointer-events-none rounded-full" />
 
-      {/* 🔴 Admin Portal Badge */}
-      {isAdmin && (
-        <div className="mx-4 mb-2">
-          <div
-            style={{
-              background: "linear-gradient(135deg, #0d9488, #0ea5e9)",
-              borderRadius: 10,
-              padding: "6px 12px",
-              display: "flex",
-              alignItems: "center",
-              gap: 7,
-            }}
+      {/* Brand Header */}
+      <div className="p-8 pb-6">
+        <div className="flex items-center gap-4 group cursor-pointer">
+          <motion.div
+            whileHover={{ rotate: 15, scale: 1.1 }}
+            className="bg-gradient-to-br from-teal-400 to-cyan-500 p-2.5 rounded-2xl text-white shadow-lg shadow-cyan-500/30"
           >
-            <ShieldCheck size={14} color="white" />
-            <span
-              style={{
-                fontSize: "0.72rem",
-                fontWeight: 700,
-                color: "white",
-                letterSpacing: "0.05em",
-              }}
-            >
-              ADMIN PORTAL
-            </span>
+            <Brain size={24} />
+          </motion.div>
+          <div>
+            <h2 className="text-lg font-black text-white tracking-tight leading-none mb-1">
+              MedClinic <span className="text-cyan-400">AI</span>
+            </h2>
+            <div className="flex items-center gap-1.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                Smart Diagnosis SaaS
+              </p>
+            </div>
           </div>
         </div>
-      )}
+      </div>
 
-      <div className="h-px bg-slate-800/50 mx-4 mb-3" />
+      {/* Admin Portal Badge */}
+      <AnimatePresence>
+        {isAdmin && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mx-6 mb-6 px-4 py-3 bg-gradient-to-r from-teal-900/40 to-emerald-900/20 border border-teal-500/20 rounded-2xl backdrop-blur-md flex items-center justify-between group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="p-1.5 bg-teal-500/20 rounded-lg">
+                <ShieldCheck size={16} className="text-teal-400" />
+              </div>
+              <span className="text-[11px] font-black tracking-widest text-teal-100 italic">
+                ADMIN ACCESS
+              </span>
+            </div>
+            <div className="w-2 h-2 rounded-full bg-teal-400 shadow-[0_0_10px_#2dd4bf] group-hover:scale-125 transition-transform" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="h-px bg-slate-800/40 mx-8 mb-4" />
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto w-full">
-        <ul className="space-y-1">
-          {menuItems.map((item) => {
-            let isActive = location.pathname.includes(item.path);
-            if (
-              item.path.includes("dashboard") &&
-              location.pathname !== item.path
-            ) {
-              isActive = false;
-            }
+      <nav className="flex-1 overflow-y-auto px-4 custom-scrollbar">
+        <div className="space-y-1.5">
+          {menuItems.map((item, idx) => {
+            const isActive =
+              location.pathname === item.path ||
+              (item.path !== "/" && location.pathname.startsWith(item.path));
 
             return (
-              <li key={`${item.title}-${item.path}`} className="px-2">
+              <motion.div
+                key={`${item.title}-${item.path}`}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 + idx * 0.05 }}
+              >
                 <Link
                   to={item.path}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium text-sm ${
+                  className={`group flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 relative overflow-hidden ${
                     isActive
-                      ? "bg-[#173235] text-teal-400 relative"
-                      : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
+                      ? "bg-teal-500/10 text-white shadow-sm"
+                      : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
                   }`}
                 >
-                  {item.icon}
-                  <span>{item.title}</span>
+                  {/* Active Indicator Bar */}
                   {isActive && (
-                    <div className="absolute right-3 w-1.5 h-1.5 rounded-full bg-teal-400" />
+                    <motion.div
+                      layoutId="active-bar"
+                      className="absolute left-0 top-0 bottom-0 w-1 bg-teal-500 rounded-r-full"
+                    />
+                  )}
+
+                  <span
+                    className={`transition-transform duration-300 group-hover:scale-110 ${isActive ? "text-teal-400" : "text-slate-500"}`}
+                  >
+                    {item.icon}
+                  </span>
+                  <span
+                    className={`text-[13.5px] font-bold tracking-wide transition-all ${isActive ? "ml-0.5" : "group-hover:translate-x-1"}`}
+                  >
+                    {item.title}
+                  </span>
+
+                  {isActive && (
+                    <motion.div
+                      layoutId="glow"
+                      className="absolute inset-0 bg-teal-500/5 blur-xl rounded-full"
+                    />
                   )}
                 </Link>
-              </li>
+              </motion.div>
             );
           })}
-        </ul>
+        </div>
       </nav>
 
-      {/* User Profile */}
-      <div className="p-4 bg-[#0d161b] flex items-center gap-3 justify-between">
-        <div className="flex items-center gap-3 overflow-hidden">
-          <div className="w-10 h-10 rounded bg-[#173235] flex items-center justify-center text-teal-400 font-bold border border-teal-900 shadow-sm shrink-0">
-            {isAdmin
-              ? "SA"
-              : user?.role === "Doctor"
-                ? "DR"
-                : user?.fullname?.charAt(0) || "U"}
+      {/* User Area Footer */}
+      <div className="p-4 mt-auto">
+        <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-[24px] p-4 flex items-center gap-3.5 group shadow-inner">
+          <div className="relative group/avatar">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white font-black text-lg shadow-lg group-hover/avatar:rotate-6 transition-transform">
+              {isAdmin ? "SA" : user?.fullname?.charAt(0).toUpperCase() || "U"}
+            </div>
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-[#0f172a] rounded-full shadow-sm" />
           </div>
-          <div className="truncate">
-            <p className="text-sm font-semibold text-slate-200 truncate">
+
+          <div className="flex-1 min-w-0 pr-2">
+            <h4 className="text-[13px] font-black text-white truncate leading-tight group-hover:text-teal-400 transition-colors">
               {user?.fullname}
-            </p>
-            <p
-              className="text-[11px] font-bold truncate"
-              style={{ color: isAdmin ? "#0d9488" : "#64748b" }}
-            >
-              {isAdmin ? "Super Admin" : user?.role}
-            </p>
+            </h4>
+            <div className="flex items-center gap-1.5">
+              <span
+                className={`text-[10px] font-bold uppercase tracking-wider ${isAdmin ? "text-teal-400" : "text-slate-500"}`}
+              >
+                {isAdmin ? "Super Admin" : userRole}
+              </span>
+            </div>
           </div>
+
+          <motion.button
+            whileHover={{
+              scale: 1.1,
+              backgroundColor: "rgba(239, 68, 68, 0.15)",
+            }}
+            whileTap={{ scale: 0.9 }}
+            onClick={handleLogout}
+            className="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-800/50 text-slate-400 hover:text-red-400 transition-colors border border-slate-700/50 group-hover:border-red-500/20"
+            title="Logout Device"
+          >
+            <LogOut size={16} />
+          </motion.button>
         </div>
-        <button
-          onClick={handleLogout}
-          className="text-slate-500 hover:text-red-400 transition-colors shrink-0"
-          title="Logout"
-        >
-          <LogOut size={18} />
-        </button>
+
+        <p className="text-center text-[9px] text-slate-600 font-bold tracking-[0.2em] mt-4 uppercase opacity-50">
+          Powered by Gemini AI
+        </p>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

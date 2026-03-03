@@ -2,7 +2,18 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { signup, reset } from "../store/userSlice";
-import { Stethoscope, Eye, EyeOff, UserPlus, Camera } from "lucide-react";
+import {
+  Heart,
+  Eye,
+  EyeOff,
+  UserPlus,
+  Camera,
+  User,
+  Mail,
+  Lock,
+  Briefcase,
+} from "lucide-react";
+import { motion } from "framer-motion";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +26,7 @@ const Signup = () => {
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [step, setStep] = useState(1);
 
   const { fullname, email, password, gender, role } = formData;
 
@@ -59,309 +71,234 @@ const Signup = () => {
     dispatch(signup(userData));
   };
 
-  /* ── shared input style ── */
-  const inputStyle = {
-    width: "100%",
-    padding: "0.7rem 1rem",
-    border: "1.5px solid #e2e8f0",
-    borderRadius: 10,
-    fontSize: "0.95rem",
-    color: "#1e293b",
-    fontFamily: "inherit",
-    outline: "none",
-    boxSizing: "border-box",
-    background: "#f8fafc",
-    transition: "border-color 0.2s",
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
   };
 
-  const labelStyle = {
-    display: "block",
-    fontSize: "0.875rem",
-    fontWeight: 600,
-    color: "#374151",
-    marginBottom: 6,
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        width: "100%",
-        fontFamily: "'Outfit', sans-serif",
-      }}
-    >
-      {/* ── LEFT PANEL – Teal gradient ──────────────────────────────────── */}
-      <div
+    <div className="min-h-screen flex w-full font-['Outfit'] bg-slate-50">
+      {/* LEFT PANEL */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        className="hidden lg:flex flex-1 flex-col items-center justify-center p-12 relative overflow-hidden"
         style={{
-          flex: 1,
-          background: "linear-gradient(135deg, #0d9488 0%, #38bdf8 100%)",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "3rem",
-          textAlign: "center",
-          color: "white",
-          position: "relative",
-          overflow: "hidden",
+          background:
+            "linear-gradient(135deg, #0d9488 0%, #0f766e 50%, #1e3a3a 100%)",
         }}
-        className="hidden lg:flex"
       >
-        {/* Decorative circles */}
-        <div
-          style={{
-            position: "absolute",
-            top: -60,
-            left: -60,
-            width: 280,
-            height: 280,
-            borderRadius: "50%",
-            background: "rgba(255,255,255,0.1)",
-          }}
+        {/* Background orbs */}
+        <motion.div
+          animate={{ y: [0, -30, 0] }}
+          transition={{ duration: 8, repeat: Infinity }}
+          className="absolute top-20 -left-32 w-72 h-72 bg-white/5 rounded-full blur-3xl"
         />
-        <div
-          style={{
-            position: "absolute",
-            bottom: -80,
-            right: -60,
-            width: 360,
-            height: 360,
-            borderRadius: "50%",
-            background: "rgba(0,0,0,0.08)",
-          }}
+        <motion.div
+          animate={{ y: [0, 30, 0] }}
+          transition={{ duration: 6, repeat: Infinity }}
+          className="absolute bottom-20 -right-32 w-80 h-80 bg-white/5 rounded-full blur-3xl"
         />
 
-        <div style={{ position: "relative", zIndex: 1, maxWidth: 340 }}>
-          {/* Stethoscope icon box */}
-          <div
-            style={{
-              width: 80,
-              height: 80,
-              background: "rgba(255,255,255,0.2)",
-              borderRadius: 20,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              margin: "0 auto 2rem",
-              backdropFilter: "blur(8px)",
-              boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
-            }}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="relative z-10 max-w-sm text-center"
+        >
+          <motion.div
+            variants={itemVariants}
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            className="w-24 h-24 mx-auto mb-8 rounded-3xl bg-white/15 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-2xl"
           >
-            <Stethoscope size={40} color="white" />
-          </div>
+            <Heart size={48} className="text-white" />
+          </motion.div>
 
-          <h1
-            style={{
-              fontSize: "2.4rem",
-              fontWeight: 800,
-              marginBottom: "1rem",
-              letterSpacing: "-0.5px",
-            }}
+          <motion.h1
+            variants={itemVariants}
+            className="text-5xl font-black text-white mb-3"
           >
-            Al Shifa Hospital
-          </h1>
-          <p
-            style={{
-              fontSize: "1rem",
-              lineHeight: 1.6,
-              color: "rgba(255,255,255,0.85)",
-              marginBottom: "3rem",
-            }}
+            Join Our Team
+          </motion.h1>
+          <motion.p
+            variants={itemVariants}
+            className="text-white/80 text-lg font-semibold mb-6"
           >
-            Join thousands of healthcare professionals using AI-powered tools to
-            deliver smarter patient care.
-          </p>
+            Deliver Better Healthcare Together
+          </motion.p>
 
-          {/* Feature stats row */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr 1fr",
-              gap: "1.5rem",
-              borderTop: "1px solid rgba(255,255,255,0.25)",
-              paddingTop: "2rem",
-            }}
-          >
+          <motion.div variants={itemVariants} className="space-y-4 text-left">
             {[
-              { value: "1200+", label: "Patients" },
-              { value: "98%", label: "Accuracy" },
-              { value: "4 Roles", label: "RBAC" },
-            ].map(({ value, label }) => (
-              <div key={label}>
-                <div
-                  style={{
-                    fontSize: "1.6rem",
-                    fontWeight: 700,
-                    marginBottom: 4,
-                  }}
-                >
-                  {value}
-                </div>
-                <div
-                  style={{
-                    fontSize: "0.7rem",
-                    color: "rgba(255,255,255,0.7)",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                  }}
-                >
-                  {label}
+              {
+                icon: "🏥",
+                title: "Smart Management",
+                desc: "Streamline your clinic operations",
+              },
+              {
+                icon: "🔒",
+                title: "Secure Access",
+                desc: "Role-based security & encryption",
+              },
+              {
+                icon: "📊",
+                title: "Real-time Insights",
+                desc: "Track appointments & analytics",
+              },
+            ].map((item, i) => (
+              <div key={i} className="flex gap-3 items-start">
+                <div className="text-2xl flex-shrink-0">{item.icon}</div>
+                <div>
+                  <p className="font-bold text-white text-sm">{item.title}</p>
+                  <p className="text-white/60 text-xs">{item.desc}</p>
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      </div>
+          </motion.div>
 
-      {/* ── RIGHT PANEL – Signup Form ────────────────────────────────────── */}
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "#ffffff",
-          padding: "3rem 2rem",
-          overflowY: "auto",
-        }}
-      >
-        <div style={{ width: "100%", maxWidth: 460 }}>
-          {/* Heading */}
-          <div style={{ marginBottom: "1.75rem" }}>
-            <h2
-              style={{
-                fontSize: "1.75rem",
-                fontWeight: 700,
-                color: "#1e293b",
-                marginBottom: 6,
-              }}
-            >
-              Create your account
-            </h2>
-            <p style={{ color: "#64748b", fontSize: "0.9rem" }}>
-              Set up your profile to get started with Al Shifa Hospital
+          <motion.div
+            variants={itemVariants}
+            className="mt-12 pt-8 border-t border-white/20"
+          >
+            <p className="text-sm font-bold text-white/60 mb-4">
+              Currently Serving 1200+ Healthcare Professionals
             </p>
-          </div>
-
-          {/* Error banner */}
-          {isError && (
-            <div
-              style={{
-                background: "#fef2f2",
-                border: "1px solid #fecaca",
-                color: "#dc2626",
-                borderRadius: 10,
-                padding: "0.75rem 1rem",
-                fontSize: "0.875rem",
-                marginBottom: "1.5rem",
-              }}
-            >
-              {message || "Something went wrong. Please try again."}
+            <div className="flex gap-2 justify-center">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="w-2.5 h-2.5 rounded-full bg-white/40" />
+              ))}
             </div>
+          </motion.div>
+        </motion.div>
+      </motion.div>
+
+      {/* RIGHT PANEL */}
+      <motion.div
+        initial={{ opacity: 0, x: 30 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8 }}
+        className="flex-1 flex flex-col justify-center items-center bg-gradient-to-br from-white via-slate-50 to-slate-100 p-6 lg:p-0 overflow-y-auto"
+      >
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="w-full max-w-lg"
+        >
+          {/* Header */}
+          <motion.div variants={itemVariants} className="mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white shadow-lg">
+                <Heart size={24} />
+              </div>
+              <div>
+                <h2 className="text-2xl font-black text-slate-900">Al Shifa</h2>
+                <p className="text-xs font-semibold text-teal-600 tracking-widest uppercase">
+                  Hospital
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Form title */}
+          <motion.div variants={itemVariants} className="mb-8">
+            <h1 className="text-3xl font-black text-slate-900 mb-2">
+              Create Account
+            </h1>
+            <p className="text-slate-600 font-medium">
+              Setup your profile in seconds
+            </p>
+          </motion.div>
+
+          {/* Error Banner */}
+          {isError && (
+            <motion.div
+              variants={itemVariants}
+              className="error-message mb-6 flex items-center gap-2"
+            >
+              ⚠️ {message || "Something went wrong. Please try again."}
+            </motion.div>
           )}
 
-          <form onSubmit={onSubmit}>
-            {/* Avatar Upload */}
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                marginBottom: "1.5rem",
-              }}
+          <form onSubmit={onSubmit} className="space-y-6">
+            {/* Profile Image */}
+            <motion.div
+              variants={itemVariants}
+              className="flex flex-col items-center"
             >
-              <div style={{ position: "relative", cursor: "pointer" }}>
-                <div
-                  style={{
-                    width: 88,
-                    height: 88,
-                    borderRadius: "50%",
-                    border: imagePreview
-                      ? "3px solid #0d9488"
-                      : "2.5px dashed #cbd5e1",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    overflow: "hidden",
-                    background: "#f8fafc",
-                    transition: "border-color 0.2s",
-                  }}
-                >
+              <label className="cursor-pointer group relative">
+                <div className="w-24 h-24 rounded-2xl border-2 border-dashed border-slate-300 group-hover:border-teal-500 flex items-center justify-center bg-slate-50 group-hover:bg-teal-50 transition-all relative overflow-hidden">
                   {imagePreview ? (
                     <img
                       src={imagePreview}
                       alt="Preview"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
+                      className="w-full h-full object-cover"
                     />
                   ) : (
-                    <Camera size={28} color="#94a3b8" />
+                    <Camera
+                      size={32}
+                      className="text-slate-400 group-hover:text-teal-600 transition-colors"
+                    />
                   )}
                 </div>
                 <input
                   type="file"
-                  name="image"
                   accept="image/*"
                   onChange={onFileChange}
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    opacity: 0,
-                    cursor: "pointer",
-                    zIndex: 10,
-                  }}
+                  className="hidden"
                 />
-              </div>
-              <p
-                style={{ fontSize: "0.75rem", color: "#94a3b8", marginTop: 8 }}
-              >
-                {imagePreview
-                  ? "Tap to change photo"
-                  : "Upload profile photo (optional)"}
-              </p>
-            </div>
+                <p className="text-xs text-slate-500 mt-2 font-medium text-center">
+                  {imagePreview ? "Tap to change" : "Upload profile photo"}
+                </p>
+              </label>
+            </motion.div>
 
             {/* Full Name */}
-            <div style={{ marginBottom: "1.25rem" }}>
-              <label style={labelStyle}>Full Name</label>
+            <motion.div variants={itemVariants}>
+              <label className="form-group label text-sm font-bold text-slate-900 mb-2 block">
+                <User size={16} className="inline mr-2 text-teal-600" />
+                Full Name
+              </label>
               <input
                 type="text"
                 name="fullname"
                 value={fullname}
                 onChange={onChange}
                 required
-                placeholder="e.g. Dr. Sarah Khan"
-                style={inputStyle}
-                onFocus={(e) => (e.target.style.borderColor = "#0d9488")}
-                onBlur={(e) => (e.target.style.borderColor = "#e2e8f0")}
+                placeholder="Dr. Sarah Khan"
+                className="form-control"
               />
-            </div>
+            </motion.div>
 
             {/* Email */}
-            <div style={{ marginBottom: "1.25rem" }}>
-              <label style={labelStyle}>Email Address</label>
+            <motion.div variants={itemVariants}>
+              <label className="form-group label text-sm font-bold text-slate-900 mb-2 block">
+                <Mail size={16} className="inline mr-2 text-teal-600" />
+                Email Address
+              </label>
               <input
                 type="email"
                 name="email"
                 value={email}
                 onChange={onChange}
                 required
-                placeholder="sarah@medclinic.com"
-                style={inputStyle}
-                onFocus={(e) => (e.target.style.borderColor = "#0d9488")}
-                onBlur={(e) => (e.target.style.borderColor = "#e2e8f0")}
+                placeholder="sarah@smartcare.com"
+                className="form-control"
               />
-            </div>
+            </motion.div>
 
             {/* Password */}
-            <div style={{ marginBottom: "1.25rem" }}>
-              <label style={labelStyle}>Password</label>
-              <div style={{ position: "relative" }}>
+            <motion.div variants={itemVariants}>
+              <label className="form-group label text-sm font-bold text-slate-900 mb-2 block">
+                <Lock size={16} className="inline mr-2 text-teal-600" />
+                Password (Min 6 chars)
+              </label>
+              <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
@@ -369,209 +306,114 @@ const Signup = () => {
                   onChange={onChange}
                   required
                   minLength="6"
-                  placeholder="Minimum 6 characters"
-                  style={{ ...inputStyle, paddingRight: "3rem" }}
-                  onFocus={(e) => (e.target.style.borderColor = "#0d9488")}
-                  onBlur={(e) => (e.target.style.borderColor = "#e2e8f0")}
+                  placeholder="••••••••"
+                  className="form-control pr-12"
                 />
-                <button
+                <motion.button
                   type="button"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => setShowPassword((p) => !p)}
-                  style={{
-                    position: "absolute",
-                    right: 12,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    color: "#94a3b8",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-teal-600 transition-colors"
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
+                </motion.button>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Gender + Role in 2 cols */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "1rem",
-                marginBottom: "1.75rem",
-              }}
+            {/* Gender & Role */}
+            <motion.div
+              variants={itemVariants}
+              className="grid grid-cols-2 gap-4"
             >
               {/* Gender */}
               <div>
-                <label style={labelStyle}>Gender</label>
-                <div style={{ position: "relative" }}>
-                  <select
-                    name="gender"
-                    value={gender}
-                    onChange={onChange}
-                    style={{
-                      ...inputStyle,
-                      paddingRight: "2.5rem",
-                      appearance: "none",
-                      cursor: "pointer",
-                    }}
-                    onFocus={(e) => (e.target.style.borderColor = "#0d9488")}
-                    onBlur={(e) => (e.target.style.borderColor = "#e2e8f0")}
-                  >
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                  </select>
-                  <div
-                    style={{
-                      position: "absolute",
-                      right: 10,
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      pointerEvents: "none",
-                      color: "#94a3b8",
-                    }}
-                  >
-                    <svg
-                      width="16"
-                      height="16"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </div>
-                </div>
+                <label className="form-group label text-sm font-bold text-slate-900 mb-2 block">
+                  Gender
+                </label>
+                <select
+                  name="gender"
+                  value={gender}
+                  onChange={onChange}
+                  className="form-control text-sm"
+                >
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
               </div>
 
               {/* Role */}
               <div>
-                <label style={labelStyle}>Account Role</label>
-                <div style={{ position: "relative" }}>
-                  <select
-                    name="role"
-                    value={role}
-                    onChange={onChange}
-                    style={{
-                      ...inputStyle,
-                      paddingRight: "2.5rem",
-                      appearance: "none",
-                      cursor: "pointer",
-                      color: "#0d9488",
-                      fontWeight: 700,
-                    }}
-                    onFocus={(e) => (e.target.style.borderColor = "#0d9488")}
-                    onBlur={(e) => (e.target.style.borderColor = "#e2e8f0")}
-                  >
-                    <option value="Patient">Patient</option>
-                    <option value="Doctor">Doctor</option>
-                    <option value="Receptionist">Receptionist</option>
-                    <option value="Admin">Admin</option>
-                  </select>
-                  <div
-                    style={{
-                      position: "absolute",
-                      right: 10,
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      pointerEvents: "none",
-                      color: "#0d9488",
-                    }}
-                  >
-                    <svg
-                      width="16"
-                      height="16"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </div>
-                </div>
+                <label className="form-group label text-sm font-bold text-slate-900 mb-2 block flex items-center gap-1">
+                  <Briefcase size={16} className="text-teal-600" />
+                  Role
+                </label>
+                <select
+                  name="role"
+                  value={role}
+                  onChange={onChange}
+                  className="form-control text-sm font-bold text-teal-600"
+                >
+                  <option value="Patient">Patient</option>
+                  <option value="Doctor">Doctor</option>
+                  <option value="Receptionist">Receptionist</option>
+                  <option value="Admin">Admin</option>
+                </select>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Submit button */}
-            <button
+            {/* Submit Button */}
+            <motion.button
+              variants={itemVariants}
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={isLoading}
-              style={{
-                width: "100%",
-                padding: "0.85rem",
-                background: isLoading ? "#5eada8" : "#0d9488",
-                color: "white",
-                border: "none",
-                borderRadius: 10,
-                fontSize: "1rem",
-                fontWeight: 700,
-                fontFamily: "inherit",
-                cursor: isLoading ? "not-allowed" : "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 8,
-                boxShadow: "0 4px 14px rgba(13,148,136,0.35)",
-                transition: "all 0.2s ease",
-              }}
+              className="w-full btn btn-primary flex items-center justify-center gap-2 text-lg font-bold"
             >
               {isLoading ? (
-                <div
-                  style={{
-                    width: 20,
-                    height: 20,
-                    borderRadius: "50%",
-                    border: "3px solid rgba(255,255,255,0.3)",
-                    borderTopColor: "white",
-                    animation: "spin 0.8s linear infinite",
-                  }}
-                />
+                <>
+                  <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin" />
+                  Creating Account...
+                </>
               ) : (
                 <>
-                  <UserPlus size={18} />
+                  <UserPlus size={20} />
                   Create Account
                 </>
               )}
-            </button>
+            </motion.button>
           </form>
 
           {/* Footer */}
-          <p
-            style={{
-              textAlign: "center",
-              marginTop: "1.5rem",
-              fontSize: "0.875rem",
-              color: "#64748b",
-            }}
+          <motion.p
+            variants={itemVariants}
+            className="text-center mt-8 text-slate-600 font-medium"
           >
-            Already have an account?{" "}
+            Already registered?{" "}
             <Link
               to="/login"
-              style={{
-                color: "#0d9488",
-                fontWeight: 700,
-                textDecoration: "none",
-              }}
+              className="text-teal-600 font-bold hover:text-emerald-600 transition-colors"
             >
-              Sign in here
+              Sign in now
             </Link>
-          </p>
-        </div>
-      </div>
+          </motion.p>
+
+          {/* Terms */}
+          <motion.p
+            variants={itemVariants}
+            className="text-center text-xs text-slate-500 mt-4 leading-relaxed"
+          >
+            By creating an account, you agree to our{" "}
+            <span className="text-slate-700 font-semibold">
+              Terms of Service
+            </span>{" "}
+            and{" "}
+            <span className="text-slate-700 font-semibold">Privacy Policy</span>
+          </motion.p>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };

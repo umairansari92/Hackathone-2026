@@ -38,6 +38,12 @@ import AppointmentsList from "./pages/AppointmentsList";
 import PrescriptionsList from "./pages/PrescriptionsList";
 import PrescriptionViewer from "./pages/PrescriptionViewer";
 
+// Patient module pages
+import PatientBookAppointment from "./pages/PatientBookAppointment";
+import MedicalHistory from "./pages/MedicalHistory";
+import PatientQueueStatus from "./pages/PatientQueueStatus";
+import PatientProfile from "./pages/PatientProfile";
+
 const App = () => {
   const { user } = useSelector((state) => state.auth);
 
@@ -120,6 +126,20 @@ const App = () => {
             {/* ── Patient ── */}
             <Route element={<ProtectedRoute allowedRoles={["Patient"]} />}>
               <Route path="/patient-dashboard" element={<PatientDashboard />} />
+              <Route
+                path="/patient/book"
+                element={<PatientBookAppointment />}
+              />
+              <Route
+                path="/patient/my-appointments"
+                element={<AppointmentsList />}
+              />
+              <Route path="/medical-history" element={<MedicalHistory />} />
+              <Route
+                path="/patient/my-queue"
+                element={<PatientQueueStatus />}
+              />
+              <Route path="/patient-profile" element={<PatientProfile />} />
             </Route>
 
             {/* ── Shared (multi-role) ── */}

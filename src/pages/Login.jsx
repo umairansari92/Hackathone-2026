@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { login, reset } from "../store/userSlice";
-import { Stethoscope, Eye, EyeOff, LogIn } from "lucide-react";
+import { Stethoscope, Eye, EyeOff, LogIn, CreditCard, User, Lock, Heart } from "lucide-react";
+import { motion } from "framer-motion";
 
 const ROLES = ["Admin", "Doctor", "Receptionist", "Patient"];
 
@@ -10,6 +11,7 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [activeRole, setActiveRole] = useState("Doctor");
+  const [hoveredDemo, setHoveredDemo] = useState(null);
 
   const { email, password } = formData;
   const navigate = useNavigate();
@@ -27,25 +29,10 @@ const Login = () => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   const DEMO_ACCOUNTS = [
-    { label: "Admin", role: "Admin", email: "admin@smartcare.com", icon: "🛡️" },
-    {
-      label: "Doctor",
-      role: "Doctor",
-      email: "ahmed.khan@smartcare.com",
-      icon: "🩺",
-    },
-    {
-      label: "Receptionist",
-      role: "Receptionist",
-      email: "reception1@smartcare.com",
-      icon: "💼",
-    },
-    {
-      label: "Patient",
-      role: "Patient",
-      email: "patient@smartcare.com",
-      icon: "👤",
-    },
+    { label: "Admin", role: "Admin", email: "admin@smartcare.com", icon: "🛡️", color: "from-amber-500 to-orange-600" },
+    { label: "Doctor", role: "Doctor", email: "ahmed.khan@smartcare.com", icon: "🩺", color: "from-teal-500 to-emerald-600" },
+    { label: "Receptionist", role: "Receptionist", email: "reception1@smartcare.com", icon: "💼", color: "from-blue-500 to-blue-600" },
+    { label: "Patient", role: "Patient", email: "patient@smartcare.com", icon: "👤", color: "from-purple-500 to-pink-600" },
   ];
 
   const handleRoleSelect = (role) => {
@@ -67,251 +54,146 @@ const Login = () => {
     dispatch(login({ email, password, role: activeRole }));
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  };
+
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        width: "100%",
-        fontFamily: "'Outfit', sans-serif",
-      }}
-    >
-      {/* ── LEFT PANEL – Teal gradient ──────────────────────────────────── */}
-      <div
+    <div className="min-h-screen flex w-full font-['Outfit'] bg-slate-50">
+      {/* LEFT PANEL – Gradient */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        className="hidden lg:flex flex-1 flex-col items-center justify-center p-12 relative overflow-hidden"
         style={{
-          flex: 1,
-          background: "linear-gradient(135deg, #0d9488 0%, #38bdf8 100%)",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "3rem",
-          textAlign: "center",
-          color: "white",
-          position: "relative",
-          overflow: "hidden",
+          background: "linear-gradient(135deg, #0d9488 0%, #0f766e 50%, #1e3a3a 100%)",
         }}
-        className="hidden lg:flex"
       >
-        {/* Decorative circles */}
-        <div
-          style={{
-            position: "absolute",
-            top: -60,
-            left: -60,
-            width: 280,
-            height: 280,
-            borderRadius: "50%",
-            background: "rgba(255,255,255,0.1)",
+        {/* Animated background orbs */}
+        <motion.div
+          animate={{
+            y: [0, -30, 0],
           }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-20 -left-32 w-72 h-72 bg-white/5 rounded-full blur-3xl"
         />
-        <div
-          style={{
-            position: "absolute",
-            bottom: -80,
-            right: -60,
-            width: 360,
-            height: 360,
-            borderRadius: "50%",
-            background: "rgba(0,0,0,0.08)",
+        <motion.div
+          animate={{
+            y: [0, 30, 0],
           }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-20 -right-32 w-80 h-80 bg-white/5 rounded-full blur-3xl"
         />
 
-        <div style={{ position: "relative", zIndex: 1, maxWidth: 340 }}>
-          {/* Stethoscope icon box */}
-          <div
-            style={{
-              width: 80,
-              height: 80,
-              background: "rgba(255,255,255,0.2)",
-              borderRadius: 20,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              margin: "0 auto 2rem",
-              backdropFilter: "blur(8px)",
-              boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
-            }}
+        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="relative z-10 max-w-sm text-center">
+          {/* Icon Box */}
+          <motion.div
+            variants={itemVariants}
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            className="w-24 h-24 mx-auto mb-8 rounded-3xl bg-white/15 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-2xl"
           >
-            <Stethoscope size={40} color="white" />
-          </div>
+            <Heart size={48} className="text-white" />
+          </motion.div>
 
-          <h1
-            style={{
-              fontSize: "2.4rem",
-              fontWeight: 800,
-              marginBottom: "1rem",
-              letterSpacing: "-0.5px",
-            }}
-          >
+          <motion.h1 variants={itemVariants} className="text-5xl font-black text-white mb-3 tracking-tight">
             Al Shifa Hospital
-          </h1>
-          <p
-            style={{
-              fontSize: "1rem",
-              lineHeight: 1.6,
-              color: "rgba(255,255,255,0.85)",
-              marginBottom: "3rem",
-            }}
-          >
-            Intelligent clinic management with AI-powered diagnostics. Digitize
-            your workflow today.
-          </p>
+          </motion.h1>
+          <motion.p variants={itemVariants} className="text-white/80 text-lg font-semibold mb-4">
+            Modern Healthcare Management
+          </motion.p>
+          <motion.p variants={itemVariants} className="text-white/60 text-base leading-relaxed">
+            Manage appointments, prescriptions, and patient care with our intelligent healthcare system.
+          </motion.p>
 
-          {/* Stats row */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr 1fr",
-              gap: "1.5rem",
-              borderTop: "1px solid rgba(255,255,255,0.25)",
-              paddingTop: "2rem",
-            }}
-          >
+          {/* Features */}
+          <motion.div variants={itemVariants} className="mt-12 space-y-4">
             {[
-              { value: "1200+", label: "Patients" },
-              { value: "98%", label: "Accuracy" },
-              { value: "4 Roles", label: "RBAC" },
-            ].map(({ value, label }) => (
-              <div key={label}>
-                <div
-                  style={{
-                    fontSize: "1.6rem",
-                    fontWeight: 700,
-                    marginBottom: 4,
-                  }}
-                >
-                  {value}
-                </div>
-                <div
-                  style={{
-                    fontSize: "0.7rem",
-                    color: "rgba(255,255,255,0.7)",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                  }}
-                >
-                  {label}
-                </div>
+              { icon: "🏥", text: "Complete Hospital Management" },
+              { icon: "👥", text: "Multi-Role Access Control" },
+              { icon: "📊", text: "Real-time Analytics & Reports" },
+            ].map((feature, i) => (
+              <div key={i} className="flex items-center gap-3 text-white/70 text-sm font-medium">
+                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-lg">{feature.icon}</div>
+                {feature.text}
               </div>
             ))}
-          </div>
-        </div>
-      </div>
+          </motion.div>
+        </motion.div>
+      </motion.div>
 
-      {/* ── RIGHT PANEL – Form ──────────────────────────────────────────── */}
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "#ffffff",
-          padding: "3rem 2rem",
-        }}
+      {/* RIGHT PANEL – Form */}
+      <motion.div
+        initial={{ opacity: 0, x: 30 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8 }}
+        className="flex-1 flex flex-col justify-center items-center bg-gradient-to-br from-white via-slate-50 to-slate-100 p-6 lg:p-0"
       >
-        <div style={{ width: "100%", maxWidth: 440 }}>
-          {/* Heading */}
-          <div style={{ marginBottom: "2rem" }}>
-            <h2
-              style={{
-                fontSize: "1.75rem",
-                fontWeight: 700,
-                color: "#1e293b",
-                marginBottom: 6,
-              }}
-            >
-              Welcome back
-            </h2>
-            <p style={{ color: "#64748b", fontSize: "0.9rem" }}>
-              Sign in to access your clinic dashboard
-            </p>
-          </div>
-
-          {/* Error banner */}
-          {isError && (
-            <div
-              style={{
-                background: "#fef2f2",
-                border: "1px solid #fecaca",
-                color: "#dc2626",
-                borderRadius: 10,
-                padding: "0.75rem 1rem",
-                fontSize: "0.875rem",
-                marginBottom: "1.5rem",
-              }}
-            >
-              {message || "Invalid credentials. Please try again."}
-            </div>
-          )}
-
-          <form onSubmit={onSubmit}>
-            {/* Login As label */}
-            <div style={{ marginBottom: "1.5rem" }}>
-              <p
-                style={{
-                  fontSize: "0.7rem",
-                  fontWeight: 700,
-                  color: "#94a3b8",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.08em",
-                  marginBottom: 10,
-                }}
-              >
-                Login As
-              </p>
-              {/* Pill tab switcher */}
-              <div
-                style={{
-                  display: "inline-flex",
-                  background: "#f1f5f9",
-                  padding: 4,
-                  borderRadius: 999,
-                  gap: 2,
-                }}
-              >
-                {ROLES.map((role) => (
-                  <button
-                    key={role}
-                    type="button"
-                    onClick={() => handleRoleSelect(role)}
-                    style={{
-                      padding: "6px 16px",
-                      borderRadius: 999,
-                      border: "none",
-                      cursor: "pointer",
-                      fontSize: "0.8rem",
-                      fontWeight: 600,
-                      fontFamily: "inherit",
-                      transition: "all 0.2s ease",
-                      background:
-                        activeRole === role ? "#0d9488" : "transparent",
-                      color: activeRole === role ? "#ffffff" : "#64748b",
-                      boxShadow:
-                        activeRole === role
-                          ? "0 2px 8px rgba(13,148,136,0.3)"
-                          : "none",
-                    }}
-                  >
-                    {role}
-                  </button>
-                ))}
+        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="w-full max-w-md">
+          {/* Header */}
+          <motion.div variants={itemVariants} className="mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white shadow-lg">
+                <Stethoscope size={24} />
+              </div>
+              <div>
+                <h2 className="text-2xl font-black text-slate-900">Welcome</h2>
+                <p className="text-xs font-semibold text-teal-600 tracking-widest uppercase">Al Shifa</p>
               </div>
             </div>
+          </motion.div>
 
-            {/* Email */}
-            <div style={{ marginBottom: "1.25rem" }}>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.875rem",
-                  fontWeight: 600,
-                  color: "#374151",
-                  marginBottom: 6,
-                }}
-              >
-                Email
+          {/* Heading */}
+          <motion.div variants={itemVariants} className="mb-8">
+            <h1 className="text-3xl font-black text-slate-900 mb-2">Sign In</h1>
+            <p className="text-slate-600 font-medium">Access your clinic dashboard securely</p>
+          </motion.div>
+
+          {/* Error Banner */}
+          {isError && (
+            <motion.div
+              variants={itemVariants}
+              className="error-message mb-6 flex items-center gap-3"
+            >
+              <div className="text-xl">⚠️</div>
+              {message || "Invalid credentials. Please try again."}
+            </motion.div>
+          )}
+
+          <form onSubmit={onSubmit} className="space-y-6">
+            {/* Role Selection */}
+            <motion.div variants={itemVariants}>
+              <p className="text-xs font-bold uppercase tracking-widest text-slate-600 mb-3">Select Your Role</p>
+              <div className="grid grid-cols-2 gap-3">
+                {ROLES.map((role) => (
+                  <motion.button
+                    key={role}
+                    type="button"
+                    whileHover={{ y: -2 }}
+                    onClick={() => handleRoleSelect(role)}
+                    className={`py-3 px-4 rounded-xl font-bold text-sm transition-all duration-300 ${
+                      activeRole === role
+                        ? "bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-lg shadow-teal-500/30"
+                        : "bg-white border-2 border-slate-200 text-slate-700 hover:border-teal-500"
+                    }`}
+                  >
+                    {role}
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Email Field */}
+            <motion.div variants={itemVariants}>
+              <label className="form-group label text-sm font-bold text-slate-900 mb-2 block">
+                <User size={16} className="inline mr-2 text-teal-600" />
+                Email Address
               </label>
               <input
                 type="email"
@@ -319,39 +201,18 @@ const Login = () => {
                 value={email}
                 onChange={onChange}
                 required
-                placeholder="doctor@medclinic.com"
-                style={{
-                  width: "100%",
-                  padding: "0.7rem 1rem",
-                  border: "1.5px solid #e2e8f0",
-                  borderRadius: 10,
-                  fontSize: "0.95rem",
-                  color: "#1e293b",
-                  fontFamily: "inherit",
-                  outline: "none",
-                  boxSizing: "border-box",
-                  background: "#f8fafc",
-                  transition: "border-color 0.2s",
-                }}
-                onFocus={(e) => (e.target.style.borderColor = "#0d9488")}
-                onBlur={(e) => (e.target.style.borderColor = "#e2e8f0")}
+                placeholder="yourname@smartcare.com"
+                className="form-control w-full"
               />
-            </div>
+            </motion.div>
 
-            {/* Password */}
-            <div style={{ marginBottom: "1.75rem" }}>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.875rem",
-                  fontWeight: 600,
-                  color: "#374151",
-                  marginBottom: 6,
-                }}
-              >
+            {/* Password Field */}
+            <motion.div variants={itemVariants}>
+              <label className="form-group label text-sm font-bold text-slate-900 mb-2 block">
+                <Lock size={16} className="inline mr-2 text-teal-600" />
                 Password
               </label>
-              <div style={{ position: "relative" }}>
+              <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
@@ -359,210 +220,77 @@ const Login = () => {
                   onChange={onChange}
                   required
                   placeholder="••••••••"
-                  style={{
-                    width: "100%",
-                    padding: "0.7rem 3rem 0.7rem 1rem",
-                    border: "1.5px solid #e2e8f0",
-                    borderRadius: 10,
-                    fontSize: "0.95rem",
-                    color: "#1e293b",
-                    fontFamily: "inherit",
-                    outline: "none",
-                    boxSizing: "border-box",
-                    background: "#f8fafc",
-                    transition: "border-color 0.2s",
-                  }}
-                  onFocus={(e) => (e.target.style.borderColor = "#0d9488")}
-                  onBlur={(e) => (e.target.style.borderColor = "#e2e8f0")}
+                  className="form-control w-full pr-12"
                 />
-                <button
+                <motion.button
                   type="button"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => setShowPassword((p) => !p)}
-                  style={{
-                    position: "absolute",
-                    right: 12,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    color: "#94a3b8",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-teal-600 transition-colors"
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
+                </motion.button>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Sign In button */}
-            <button
+            {/* Sign In Button */}
+            <motion.button
+              variants={itemVariants}
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={isLoading}
-              style={{
-                width: "100%",
-                padding: "0.85rem",
-                background: isLoading ? "#5eada8" : "#0d9488",
-                color: "white",
-                border: "none",
-                borderRadius: 10,
-                fontSize: "1rem",
-                fontWeight: 700,
-                fontFamily: "inherit",
-                cursor: isLoading ? "not-allowed" : "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 8,
-                boxShadow: "0 4px 14px rgba(13,148,136,0.35)",
-                transition: "all 0.2s ease",
-              }}
+              className="w-full btn btn-primary flex items-center justify-center gap-2 text-lg font-bold"
             >
               {isLoading ? (
-                <div
-                  style={{
-                    width: 20,
-                    height: 20,
-                    borderRadius: "50%",
-                    border: "3px solid rgba(255,255,255,0.3)",
-                    borderTopColor: "white",
-                    animation: "spin 0.8s linear infinite",
-                  }}
-                />
+                <>
+                  <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin" />
+                  Signing in...
+                </>
               ) : (
                 <>
-                  <LogIn size={18} />
+                  <LogIn size={20} />
                   Sign In
                 </>
               )}
-            </button>
-
-            {/* ── Demo Accounts Panel ── */}
-            <div style={{ marginTop: "1.5rem" }}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                  marginBottom: 10,
-                }}
-              >
-                <div style={{ flex: 1, height: 1, background: "#e2e8f0" }} />
-                <span
-                  style={{
-                    fontSize: "0.72rem",
-                    fontWeight: 700,
-                    color: "#94a3b8",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.08em",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  Demo Accounts
-                </span>
-                <div style={{ flex: 1, height: 1, background: "#e2e8f0" }} />
-              </div>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: 8,
-                }}
-              >
-                {DEMO_ACCOUNTS.map((acct) => {
-                  const colors =
-                    {
-                      Admin: {
-                        bg: "#fef3c7",
-                        border: "#fde68a",
-                        color: "#92400e",
-                      },
-                      Doctor: {
-                        bg: "#ecfdf5",
-                        border: "#a7f3d0",
-                        color: "#065f46",
-                      },
-                      Receptionist: {
-                        bg: "#eff6ff",
-                        border: "#bfdbfe",
-                        color: "#1e40af",
-                      },
-                      Patient: {
-                        bg: "#f5f3ff",
-                        border: "#ddd6fe",
-                        color: "#5b21b6",
-                      },
-                    }[acct.role] || {};
-                  return (
-                    <button
-                      key={acct.role}
-                      type="button"
-                      onClick={() => handleDemoLogin(acct)}
-                      style={{
-                        padding: "8px 10px",
-                        borderRadius: 10,
-                        border: `1.5px solid ${colors.border}`,
-                        background: colors.bg,
-                        color: colors.color,
-                        fontWeight: 700,
-                        fontSize: "0.78rem",
-                        fontFamily: "inherit",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 5,
-                        justifyContent: "center",
-                        transition: "opacity 0.15s",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.opacity = "0.75")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.opacity = "1")
-                      }
-                    >
-                      <span>{acct.icon}</span> {acct.label}
-                    </button>
-                  );
-                })}
-              </div>
-              <p
-                style={{
-                  textAlign: "center",
-                  fontSize: "0.7rem",
-                  color: "#cbd5e1",
-                  marginTop: 8,
-                }}
-              >
-                Password: <strong style={{ color: "#94a3b8" }}>demo1234</strong>
-              </p>
-            </div>
+            </motion.button>
           </form>
 
+          {/* Demo Accounts Section */}
+          <motion.div variants={itemVariants} className="mt-8 pt-8 border-t-2 border-slate-200">
+            <p className="text-xs font-bold uppercase tracking-widest text-slate-600 mb-4 text-center">Quick Demo Access</p>
+            <div className="grid grid-cols-2 gap-3">
+              {DEMO_ACCOUNTS.map((acct, i) => (
+                <motion.button
+                  key={acct.role}
+                  type="button"
+                  whileHover={{ y: -3 }}
+                  whileTap={{ scale: 0.95 }}
+                  onMouseEnter={() => setHoveredDemo(i)}
+                  onMouseLeave={() => setHoveredDemo(null)}
+                  onClick={() => handleDemoLogin(acct)}
+                  className={`py-3 px-4 rounded-xl font-bold text-sm transition-all duration-300 bg-white border-2 border-slate-200 hover:border-teal-500 ${
+                    hoveredDemo === i ? `bg-gradient-to-r ${acct.color} text-white shadow-lg` : "text-slate-700"
+                  }`}
+                >
+                  <div className="text-xl mb-1">{acct.icon}</div>
+                  {acct.label}
+                </motion.button>
+              ))}
+            </div>
+            <p className="text-xs text-slate-400 text-center mt-3 font-medium">Password: <span className="font-bold text-slate-600">demo1234</span></p>
+          </motion.div>
+
           {/* Footer */}
-          <p
-            style={{
-              textAlign: "center",
-              marginTop: "1.5rem",
-              fontSize: "0.875rem",
-              color: "#64748b",
-            }}
-          >
+          <motion.p variants={itemVariants} className="text-center mt-8 text-slate-600 font-medium">
             Don't have an account?{" "}
-            <Link
-              to="/signup"
-              style={{
-                color: "#0d9488",
-                fontWeight: 700,
-                textDecoration: "none",
-              }}
-            >
-              Register here
+            <Link to="/signup" className="text-teal-600 font-bold hover:text-emerald-600 transition-colors">
+              Create one now
             </Link>
-          </p>
-        </div>
-      </div>
+          </motion.p>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };

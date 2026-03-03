@@ -1,414 +1,279 @@
 import { useState } from "react";
-import { useGetAppointmentsQuery } from "../store/appointmentApiSlice";
+import {
+  useGetAppointmentsQuery,
+  useUpdateAppointmentStatusMutation,
+} from "../store/appointmentApiSlice";
 import { useSelector } from "react-redux";
 import {
   Calendar,
   Clock,
-  User,
-  Activity,
+  Stethoscope,
   CheckCircle2,
   XCircle,
+  MapPin,
+  AlertCircle,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { toast } from "react-hot-toast";
 import dayjs from "dayjs";
 
-const STATUS_SC = {
-  Scheduled: { bg: "#fffbeb", color: "#d97706", border: "#fde68a" },
-  Completed: { bg: "#ecfdf5", color: "#059669", border: "#a7f3d0" },
-  Cancelled: { bg: "#fef2f2", color: "#dc2626", border: "#fecaca" },
+const STATUS_CONFIG = {
+  Scheduled: { bg: "#eff6ff", text: "#0ea5e9", border: "#bfdbfe" },
+  Completed: { bg: "#ecfdf5", text: "#10b981", border: "#a7f3d0" },
+  "In Progress": { bg: "#fffbeb", text: "#d97706", border: "#fde68a" },
+  Cancelled: { bg: "#fef2f2", text: "#dc2626", border: "#fecaca" },
 };
 
 const AppointmentsList = () => {
-  const {
-    data: appointments,
-    isLoading,
-    isError,
-    error,
-  } = useGetAppointmentsQuery();
+  const { data: appointments, isLoading, isError, error } = useGetAppointmentsQuery();
+  const [updateStatus] = useUpdateAppointmentStatusMutation();
   const { user } = useSelector((state) => state.auth);
   const [filter, setFilter] = useState("all");
+
+  const handleStatusUpdate = async (id, status) => {
+    try {
+      await updateStatus({ id, status }).unwrap();
+      toast.success(status === "Completed" ? "Session finalized! ✅" : "Appointment cancelled");
+    } catch {
+      toast.error("Status update failed");
+    }
+  };
 
   const filtered =
     filter === "all"
       ? appointments
       : appointments?.filter((a) => a.status?.toLowerCase() === filter);
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+  };
+
   if (isLoading)
     return (
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "60vh",
-        }}
-      >
-        <div
-          style={{
-            width: 36,
-            height: 36,
-            borderRadius: "50%",
-            border: "3px solid #e2e8f0",
-            borderTopColor: "#0d9488",
-            animation: "spin 0.9s linear infinite",
-          }}
-        />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh", fontFamily: "'Outfit', sans-serif" }}>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ width: 48, height: 48, background: "#f0fdfa", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", border: "2px solid #e0f2fe", animation: "spin 0.8s linear infinite" }}>
+            <Calendar size={24} color="#14b8a6" />
+          </div>
+          <p style={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.75rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+            Assembling Schedule...
+          </p>
+        </div>
       </div>
     );
 
   if (isError)
     return (
-      <div
-        style={{
-          padding: "32px",
-          textAlign: "center",
-          color: "#dc2626",
-          background: "#fef2f2",
-          borderRadius: 16,
-          border: "1px solid #fecaca",
-        }}
-      >
-        Error loading appointments: {error?.data?.message || "Unknown error"}
+      <div style={{ padding: "40px", textAlign: "center", color: "#dc2626", background: "linear-gradient(135deg, rgba(239, 68, 68, 0.08), rgba(220, 38, 38, 0.05))", borderRadius: 20, border: "1px solid rgba(239, 68, 68, 0.2)" }}>
+        <AlertCircle size={40} style={{ margin: "0 auto 16px", opacity: 0.5 }} />
+        <p style={{ fontWeight: 700, fontSize: "1.05rem", marginBottom: 6 }}>Error Loading Appointments</p>
+        <p style={{ fontSize: "0.9rem", color: "#991b1b" }}>{error?.data?.message || "Unknown error"}</p>
       </div>
     );
 
   return (
-    <div style={{ fontFamily: "'Outfit', sans-serif", paddingBottom: 48 }}>
-      {/* ── Header ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        style={{
-          marginBottom: 28,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-end",
-          flexWrap: "wrap",
-          gap: 14,
-        }}
-      >
-        <div>
-          <h2
-            style={{
-              fontSize: "1.65rem",
-              fontWeight: 800,
-              color: "#0f172a",
-              marginBottom: 4,
-            }}
-          >
-            Schedule Overview
-          </h2>
-          <p style={{ color: "#64748b", fontSize: "0.875rem" }}>
-            {user?.role === "Patient"
-              ? "Your upcoming and past clinic visits."
-              : "Manage all clinic appointments and schedules."}
-          </p>
-        </div>
-        {user?.role !== "Patient" && (
-          <div
-            style={{
-              display: "flex",
-              background: "#f1f5f9",
-              padding: 4,
-              borderRadius: 999,
-              gap: 2,
-            }}
-          >
-            {["all", "scheduled", "completed", "cancelled"].map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                style={{
-                  padding: "6px 14px",
-                  borderRadius: 999,
-                  border: "none",
-                  cursor: "pointer",
-                  fontFamily: "inherit",
-                  fontSize: "0.78rem",
-                  fontWeight: 700,
-                  transition: "all 0.18s",
-                  background: filter === f ? "#0d9488" : "transparent",
-                  color: filter === f ? "white" : "#64748b",
-                  boxShadow:
-                    filter === f ? "0 2px 8px rgba(13,148,136,0.3)" : "none",
-                }}
-              >
-                {f.charAt(0).toUpperCase() + f.slice(1)}
-              </button>
-            ))}
+    <div style={{ fontFamily: "'Outfit', sans-serif", minHeight: "100vh", background: "#f8fafc", padding: "40px 20px", color: "#0f172a" }}>
+      {/* Background Orbs */}
+      <div style={{
+        position: "fixed", top: "-10%", right: "-10%", width: 500, height: 500,
+        background: "radial-gradient(circle, rgba(13, 148, 136, 0.1) 0%, transparent 70%)",
+        borderRadius: "50%", pointerEvents: "none", zIndex: 0,
+      }} />
+      <div style={{
+        position: "fixed", bottom: "-10%", left: "-10%", width: 400, height: 400,
+        background: "radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 70%)",
+        borderRadius: "50%", pointerEvents: "none", zIndex: 0,
+      }} />
+
+      <div style={{ maxWidth: 1400, margin: "0 auto", position: "relative", zIndex: 10 }}>
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: 32, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <div>
+            <p style={{ fontSize: "0.8rem", fontWeight: 700, color: "#0d9488", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
+              <Calendar size={14} /> Appointments
+            </p>
+            <h1 style={{ fontSize: "2rem", fontWeight: 900, color: "#0f172a", marginBottom: 8 }}>
+              Manage clinic schedule & patient visits
+            </h1>
           </div>
+        </motion.div>
+
+        {/* Filter Tabs */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
+          {["all", "scheduled", "completed", "in progress", "cancelled"].map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              style={{
+                padding: "8px 16px",
+                borderRadius: 10,
+                border: "1.5px solid",
+                borderColor: filter === f ? "#0d9488" : "#e2e8f0",
+                background: filter === f ? "#ecfdf5" : "white",
+                color: filter === f ? "#0d9488" : "#64748b",
+                fontSize: "0.8rem",
+                fontWeight: 700,
+                fontFamily: "inherit",
+                cursor: "pointer",
+                textTransform: "capitalize",
+                transition: "all 0.2s",
+              }}
+              onMouseEnter={(e) => { if (filter !== f) e.currentTarget.borderColor = "#cbd5e1"; }}
+              onMouseLeave={(e) => { if (filter !== f) e.currentTarget.borderColor = "#e2e8f0"; }}
+            >
+              {f}
+            </button>
+          ))}
+        </motion.div>
+
+        {filtered?.length === 0 ? (
+          <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} style={{
+            background: "rgba(255,255,255,0.7)", backdropFilter: "blur(16px)",
+            border: "2px dashed #e2e8f0", borderRadius: 24, padding: 60, textAlign: "center",
+          }}>
+            <Calendar size={48} style={{ margin: "0 auto 16px", color: "#cbd5e1", opacity: 0.4 }} />
+            <h3 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", marginBottom: 8 }}>No Appointments Found</h3>
+            <p style={{ fontSize: "0.95rem", color: "#94a3b8" }}>No appointments match the current filter.</p>
+          </motion.div>
+        ) : (
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+              gap: 20,
+            }}
+          >
+            {filtered?.map((appt) => {
+              const statusConfig = STATUS_CONFIG[appt.status] || STATUS_CONFIG.Scheduled;
+              const patientInitial = (user?.role === "Patient" ? appt.doctorId?.fullname : appt.patientId?.name)?.charAt(0)?.toUpperCase() || "U";
+              const colors = ["#0d9488", "#3b82f6", "#8b5cf6", "#f59e0b", "#10b981", "#ef4444"];
+              const colorIndex = appt._id?.charCodeAt(0) % colors.length;
+              const color = colors[colorIndex];
+
+              return (
+                <motion.div key={appt._id} variants={itemVariants}
+                  style={{
+                    background: "rgba(255,255,255,0.8)",
+                    backdropFilter: "blur(16px)",
+                    border: "1px solid rgba(255,255,255,0.9)",
+                    borderRadius: 18,
+                    padding: 20,
+                    boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
+                    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 14,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-6px)";
+                    e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.12)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "0 4px 24px rgba(0,0,0,0.06)";
+                  }}
+                >
+                  {/* Header with Status */}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                    <div style={{ flex: 1 }}>
+                      <p style={{ fontSize: "0.65rem", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 6 }}>
+                        {user?.role === "Patient" ? "Doctor" : "Patient"}
+                      </p>
+                      <h3 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#0f172a", marginBottom: 4 }}>
+                        {user?.role === "Patient" ? `Dr. ${appt.doctorId?.fullname}` : appt.patientId?.name}
+                      </h3>
+                      <p style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>
+                        {user?.role === "Patient" ? appt.doctorId?.specialization : "Standard Checkup"}
+                      </p>
+                    </div>
+                    <div style={{
+                      padding: "6px 12px", borderRadius: 10, background: statusConfig.bg,
+                      color: statusConfig.text, border: `1.5px solid ${statusConfig.border}`,
+                      fontSize: "0.7rem", fontWeight: 700, whiteSpace: "nowrap",
+                    }}>
+                      {appt.status}
+                    </div>
+                  </div>
+
+                  {/* Avatar */}
+                  <div style={{
+                    width: 50, height: 50, borderRadius: 14, background: `linear-gradient(135deg, ${color}, ${color}dd)`,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    color: "white", fontWeight: 800, fontSize: "1.2rem",
+                    boxShadow: `0 4px 12px ${color}40`,
+                  }}>
+                    {patientInitial}
+                  </div>
+
+                  {/* Details Grid */}
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, padding: "12px 0", borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>
+                    <div>
+                      <p style={{ fontSize: "0.65rem", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", marginBottom: 4 }}>Date</p>
+                      <p style={{ fontSize: "0.9rem", fontWeight: 700, color: "#0f172a" }}>{dayjs(appt.date).format("MMM DD, YYYY")}</p>
+                    </div>
+                    <div>
+                      <p style={{ fontSize: "0.65rem", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", marginBottom: 4 }}>Time</p>
+                      <p style={{ fontSize: "0.9rem", fontWeight: 700, color: "#0f172a", display: "flex", alignItems: "center", gap: 5 }}>
+                        <Clock size={13} /> {dayjs(appt.date).format("HH:mm")}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Notes */}
+                  {appt.reason && (
+                    <div style={{ padding: 10, background: "#f8fafc", borderRadius: 10, fontSize: "0.8rem", color: "#475569", fontStyle: "italic" }}>
+                      📝 {appt.reason}
+                    </div>
+                  )}
+
+                  {/* Actions */}
+                  <div style={{ display: "flex", gap: 8, marginTop: "auto" }}>
+                    {user?.role !== "Patient" && appt.status === "Scheduled" && (
+                      <>
+                        <button onClick={() => handleStatusUpdate(appt._id, "Cancelled")}
+                          style={{
+                            flex: 1, padding: "8px 12px", borderRadius: 10, border: "1.5px solid #fecaca",
+                            background: "#fef2f2", color: "#dc2626", fontSize: "0.75rem", fontWeight: 700,
+                            fontFamily: "inherit", cursor: "pointer", transition: "all 0.2s",
+                          }}
+                          onMouseEnter={(e) => { e.currentTarget.background = "#fee2e2"; }}
+                          onMouseLeave={(e) => { e.currentTarget.background = "#fef2f2"; }}>
+                          Cancel
+                        </button>
+                        <button onClick={() => handleStatusUpdate(appt._id, "Completed")}
+                          style={{
+                            flex: 1, padding: "8px 12px", borderRadius: 10, border: "none",
+                            background: color, color: "white", fontSize: "0.75rem", fontWeight: 700,
+                            fontFamily: "inherit", cursor: "pointer", transition: "all 0.2s",
+                            boxShadow: `0 4px 12px ${color}40`,
+                          }}
+                          onMouseEnter={(e) => { e.currentTarget.transform = "scale(1.02)"; }}
+                          onMouseLeave={(e) => { e.currentTarget.transform = "scale(1)"; }}>
+                          Complete
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
         )}
-      </motion.div>
-
-      {/* ── Table Card ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.08 }}
-        style={{
-          background: "rgba(255,255,255,0.8)",
-          backdropFilter: "blur(16px)",
-          border: "1px solid rgba(255,255,255,0.9)",
-          borderRadius: 18,
-          overflow: "hidden",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
-        }}
-      >
-        <div
-          style={{
-            padding: "18px 24px",
-            borderBottom: "1px solid #f1f5f9",
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-          }}
-        >
-          <Calendar size={18} color="#0d9488" />
-          <h3
-            style={{ fontWeight: 700, color: "#1e293b", fontSize: "0.95rem" }}
-          >
-            Appointments
-          </h3>
-          <span
-            style={{
-              background: "#0d9488",
-              color: "white",
-              borderRadius: 20,
-              fontSize: "0.65rem",
-              fontWeight: 800,
-              padding: "2px 8px",
-            }}
-          >
-            {filtered?.length || 0}
-          </span>
-        </div>
-
-        <div style={{ overflowX: "auto" }}>
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              fontSize: "0.875rem",
-            }}
-          >
-            <thead>
-              <tr style={{ background: "#f8fafc" }}>
-                <th style={thStyle}>Date & Time</th>
-                {user?.role !== "Patient" && <th style={thStyle}>Patient</th>}
-                {user?.role !== "Doctor" && <th style={thStyle}>Doctor</th>}
-                <th style={thStyle}>Status</th>
-                <th style={{ ...thStyle, textAlign: "right" }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered?.map((appt) => {
-                const sc = STATUS_SC[appt.status] || STATUS_SC.Scheduled;
-                return (
-                  <tr
-                    key={appt._id}
-                    style={{
-                      borderTop: "1px solid #f1f5f9",
-                      transition: "background 0.15s",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.background = "#f8fafc88")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.background = "transparent")
-                    }
-                  >
-                    <td style={tdStyle}>
-                      <p style={{ fontWeight: 700, color: "#1e293b" }}>
-                        {dayjs(appt.date).format("MMM DD, YYYY")}
-                      </p>
-                      <p
-                        style={{
-                          fontSize: "0.72rem",
-                          color: "#94a3b8",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 4,
-                          marginTop: 2,
-                        }}
-                      >
-                        <Clock size={11} /> {dayjs(appt.date).format("hh:mm A")}
-                      </p>
-                    </td>
-                    {user?.role !== "Patient" && (
-                      <td style={tdStyle}>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 10,
-                          }}
-                        >
-                          <div
-                            style={{
-                              width: 32,
-                              height: 32,
-                              borderRadius: 9,
-                              background:
-                                "linear-gradient(135deg, #3b82f6, #818cf8)",
-                              color: "white",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              fontWeight: 800,
-                              fontSize: "0.8rem",
-                              flexShrink: 0,
-                            }}
-                          >
-                            {appt.patientId?.name?.charAt(0) || "P"}
-                          </div>
-                          <div>
-                            <p style={{ fontWeight: 600, color: "#1e293b" }}>
-                              {appt.patientId?.name || "Unknown"}
-                            </p>
-                            <p
-                              style={{ fontSize: "0.72rem", color: "#94a3b8" }}
-                            >
-                              {appt.patientId?.contact}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                    )}
-                    {user?.role !== "Doctor" && (
-                      <td
-                        style={{
-                          ...tdStyle,
-                          color: "#475569",
-                          fontWeight: 500,
-                        }}
-                      >
-                        Dr.{" "}
-                        {appt.doctorId?.fullname?.split(" ")[1] ||
-                          appt.doctorId?.fullname ||
-                          "Unassigned"}
-                      </td>
-                    )}
-                    <td style={tdStyle}>
-                      <span
-                        style={{
-                          padding: "4px 12px",
-                          borderRadius: 999,
-                          fontSize: "0.7rem",
-                          fontWeight: 700,
-                          background: sc.bg,
-                          color: sc.color,
-                          border: `1px solid ${sc.border}`,
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: 5,
-                        }}
-                      >
-                        {appt.status === "Completed" && (
-                          <CheckCircle2 size={11} />
-                        )}
-                        {appt.status === "Cancelled" && <XCircle size={11} />}
-                        {appt.status === "Scheduled" && <Clock size={11} />}
-                        {appt.status}
-                      </span>
-                    </td>
-                    <td style={{ ...tdStyle, textAlign: "right" }}>
-                      {user?.role !== "Patient" &&
-                      appt.status === "Scheduled" ? (
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "flex-end",
-                            gap: 6,
-                          }}
-                        >
-                          <button
-                            style={{
-                              padding: "5px 12px",
-                              borderRadius: 8,
-                              border: "1px solid #a7f3d0",
-                              background: "#ecfdf5",
-                              color: "#059669",
-                              fontSize: "0.72rem",
-                              fontWeight: 700,
-                              cursor: "pointer",
-                              fontFamily: "inherit",
-                            }}
-                          >
-                            Complete
-                          </button>
-                          <button
-                            style={{
-                              padding: "5px 12px",
-                              borderRadius: 8,
-                              border: "1px solid #fecaca",
-                              background: "#fef2f2",
-                              color: "#dc2626",
-                              fontSize: "0.72rem",
-                              fontWeight: 700,
-                              cursor: "pointer",
-                              fontFamily: "inherit",
-                            }}
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      ) : (
-                        <span
-                          style={{
-                            fontSize: "0.78rem",
-                            fontWeight: 600,
-                            color: "#0d9488",
-                            cursor: "pointer",
-                          }}
-                        >
-                          View →
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-              {(!filtered || filtered.length === 0) && (
-                <tr>
-                  <td
-                    colSpan={5}
-                    style={{ padding: "48px", textAlign: "center" }}
-                  >
-                    <Calendar
-                      size={40}
-                      style={{ margin: "0 auto 12px", color: "#e2e8f0" }}
-                    />
-                    <p style={{ fontWeight: 700, color: "#64748b" }}>
-                      No appointments found
-                    </p>
-                    <p
-                      style={{
-                        fontSize: "0.8rem",
-                        color: "#94a3b8",
-                        marginTop: 4,
-                      }}
-                    >
-                      Your schedule is currently clear.
-                    </p>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </motion.div>
+      </div>
     </div>
   );
 };
-
-const thStyle = {
-  padding: "11px 22px",
-  textAlign: "left",
-  fontSize: "0.65rem",
-  fontWeight: 700,
-  color: "#94a3b8",
-  letterSpacing: "0.07em",
-};
-const tdStyle = { padding: "13px 22px" };
 
 export default AppointmentsList;
