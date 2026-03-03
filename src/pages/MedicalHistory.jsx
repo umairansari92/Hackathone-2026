@@ -14,6 +14,7 @@ import {
   Stethoscope,
   ClipboardList,
   Sparkles,
+  CheckCircle,
 } from "lucide-react";
 import { useGetMedicalHistoryQuery } from "../store/patientApiSlice";
 
@@ -104,8 +105,8 @@ const MedicalHistory = () => {
               </div>
               <h3 className="text-xl font-black text-slate-900 group-hover:text-teal-600 transition-colors">
                 {isAppt
-                  ? `Dr. ${item.data?.doctorId?.fullname}`
-                  : `Prescription: Dr. ${item.data?.doctorId?.fullname}`}
+                  ? item.data?.doctorId?.fullname
+                  : `Prescription by: ${item.data?.doctorId?.fullname}`}
               </h3>
               <div className="flex items-center gap-4 text-slate-500 text-xs font-bold uppercase tracking-widest italic">
                 <span className="flex items-center gap-1.5">

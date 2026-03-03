@@ -44,6 +44,11 @@ import MedicalHistory from "./pages/MedicalHistory";
 import PatientQueueStatus from "./pages/PatientQueueStatus";
 import PatientProfile from "./pages/PatientProfile";
 
+// Onboarding pages
+import InviteDoctor from "./pages/InviteDoctor";
+import DoctorRequests from "./pages/DoctorRequests";
+import DoctorRegister from "./pages/DoctorRegister";
+
 const App = () => {
   const { user } = useSelector((state) => state.auth);
 
@@ -94,6 +99,7 @@ const App = () => {
                 )
               }
             />
+            <Route path="/doctor-register" element={<DoctorRegister />} />
           </Route>
 
           {/* Protected layout */}
@@ -103,6 +109,11 @@ const App = () => {
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
               <Route path="/manage-doctors" element={<ManageDoctors />} />
               <Route path="/manage-users" element={<ManageUsers />} />
+              <Route path="/admin/invite-doctor" element={<InviteDoctor />} />
+              <Route
+                path="/admin/doctor-requests"
+                element={<DoctorRequests />}
+              />
             </Route>
 
             {/* ── Doctor ── */}

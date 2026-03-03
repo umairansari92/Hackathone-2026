@@ -2,7 +2,16 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { login, reset } from "../store/userSlice";
-import { Stethoscope, Eye, EyeOff, LogIn, CreditCard, User, Lock, Heart } from "lucide-react";
+import {
+  Stethoscope,
+  Eye,
+  EyeOff,
+  LogIn,
+  CreditCard,
+  User,
+  Lock,
+  Heart,
+} from "lucide-react";
 import { motion } from "framer-motion";
 
 const ROLES = ["Admin", "Doctor", "Receptionist", "Patient"];
@@ -29,10 +38,34 @@ const Login = () => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   const DEMO_ACCOUNTS = [
-    { label: "Admin", role: "Admin", email: "admin@smartcare.com", icon: "🛡️", color: "from-amber-500 to-orange-600" },
-    { label: "Doctor", role: "Doctor", email: "ahmed.khan@smartcare.com", icon: "🩺", color: "from-teal-500 to-emerald-600" },
-    { label: "Receptionist", role: "Receptionist", email: "reception1@smartcare.com", icon: "💼", color: "from-blue-500 to-blue-600" },
-    { label: "Patient", role: "Patient", email: "patient@smartcare.com", icon: "👤", color: "from-purple-500 to-pink-600" },
+    {
+      label: "Admin",
+      role: "Admin",
+      email: "admin@smartcare.com",
+      icon: "🛡️",
+      color: "from-amber-500 to-orange-600",
+    },
+    {
+      label: "Doctor",
+      role: "Doctor",
+      email: "ahmed.khan@smartcare.com",
+      icon: "🩺",
+      color: "from-teal-500 to-emerald-600",
+    },
+    {
+      label: "Receptionist",
+      role: "Receptionist",
+      email: "reception1@smartcare.com",
+      icon: "💼",
+      color: "from-blue-500 to-blue-600",
+    },
+    {
+      label: "Patient",
+      role: "Patient",
+      email: "patient@smartcare.com",
+      icon: "👤",
+      color: "from-purple-500 to-pink-600",
+    },
   ];
 
   const handleRoleSelect = (role) => {
@@ -73,7 +106,8 @@ const Login = () => {
         transition={{ duration: 0.8 }}
         className="hidden lg:flex flex-1 flex-col items-center justify-center p-12 relative overflow-hidden"
         style={{
-          background: "linear-gradient(135deg, #0d9488 0%, #0f766e 50%, #1e3a3a 100%)",
+          background:
+            "linear-gradient(135deg, #0d9488 0%, #0f766e 50%, #1e3a3a 100%)",
         }}
       >
         {/* Animated background orbs */}
@@ -92,7 +126,12 @@ const Login = () => {
           className="absolute bottom-20 -right-32 w-80 h-80 bg-white/5 rounded-full blur-3xl"
         />
 
-        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="relative z-10 max-w-sm text-center">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="relative z-10 max-w-sm text-center"
+        >
           {/* Icon Box */}
           <motion.div
             variants={itemVariants}
@@ -102,14 +141,24 @@ const Login = () => {
             <Heart size={48} className="text-white" />
           </motion.div>
 
-          <motion.h1 variants={itemVariants} className="text-5xl font-black text-white mb-3 tracking-tight">
+          <motion.h1
+            variants={itemVariants}
+            className="text-5xl font-black text-white mb-3 tracking-tight"
+          >
             Al Shifa Hospital
           </motion.h1>
-          <motion.p variants={itemVariants} className="text-white/80 text-lg font-semibold mb-4">
+          <motion.p
+            variants={itemVariants}
+            className="text-white/80 text-lg font-semibold mb-4"
+          >
             Modern Healthcare Management
           </motion.p>
-          <motion.p variants={itemVariants} className="text-white/60 text-base leading-relaxed">
-            Manage appointments, prescriptions, and patient care with our intelligent healthcare system.
+          <motion.p
+            variants={itemVariants}
+            className="text-white/60 text-base leading-relaxed"
+          >
+            Manage appointments, prescriptions, and patient care with our
+            intelligent healthcare system.
           </motion.p>
 
           {/* Features */}
@@ -119,8 +168,13 @@ const Login = () => {
               { icon: "👥", text: "Multi-Role Access Control" },
               { icon: "📊", text: "Real-time Analytics & Reports" },
             ].map((feature, i) => (
-              <div key={i} className="flex items-center gap-3 text-white/70 text-sm font-medium">
-                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-lg">{feature.icon}</div>
+              <div
+                key={i}
+                className="flex items-center gap-3 text-white/70 text-sm font-medium"
+              >
+                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-lg">
+                  {feature.icon}
+                </div>
                 {feature.text}
               </div>
             ))}
@@ -135,7 +189,12 @@ const Login = () => {
         transition={{ duration: 0.8 }}
         className="flex-1 flex flex-col justify-center items-center bg-gradient-to-br from-white via-slate-50 to-slate-100 p-6 lg:p-0"
       >
-        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="w-full max-w-md">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="w-full max-w-md"
+        >
           {/* Header */}
           <motion.div variants={itemVariants} className="mb-8">
             <div className="flex items-center gap-2 mb-4">
@@ -144,7 +203,9 @@ const Login = () => {
               </div>
               <div>
                 <h2 className="text-2xl font-black text-slate-900">Welcome</h2>
-                <p className="text-xs font-semibold text-teal-600 tracking-widest uppercase">Al Shifa</p>
+                <p className="text-xs font-semibold text-teal-600 tracking-widest uppercase">
+                  Al Shifa
+                </p>
               </div>
             </div>
           </motion.div>
@@ -152,24 +213,32 @@ const Login = () => {
           {/* Heading */}
           <motion.div variants={itemVariants} className="mb-8">
             <h1 className="text-3xl font-black text-slate-900 mb-2">Sign In</h1>
-            <p className="text-slate-600 font-medium">Access your clinic dashboard securely</p>
+            <p className="text-slate-600 font-medium">
+              Access your clinic dashboard securely
+            </p>
           </motion.div>
 
           {/* Error Banner */}
           {isError && (
             <motion.div
               variants={itemVariants}
-              className="error-message mb-6 flex items-center gap-3"
+              className="mb-6 p-4 bg-rose-50 border border-rose-100 rounded-2xl flex items-center gap-3 text-rose-600 font-bold text-sm shadow-sm"
             >
-              <div className="text-xl">⚠️</div>
-              {message || "Invalid credentials. Please try again."}
+              <div className="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center text-lg">
+                ⚠️
+              </div>
+              <p className="flex-1">
+                {message || "Invalid credentials. Please try again."}
+              </p>
             </motion.div>
           )}
 
           <form onSubmit={onSubmit} className="space-y-6">
             {/* Role Selection */}
             <motion.div variants={itemVariants}>
-              <p className="text-xs font-bold uppercase tracking-widest text-slate-600 mb-3">Select Your Role</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-slate-600 mb-3">
+                Select Your Role
+              </p>
               <div className="grid grid-cols-2 gap-3">
                 {ROLES.map((role) => (
                   <motion.button
@@ -258,8 +327,13 @@ const Login = () => {
           </form>
 
           {/* Demo Accounts Section */}
-          <motion.div variants={itemVariants} className="mt-8 pt-8 border-t-2 border-slate-200">
-            <p className="text-xs font-bold uppercase tracking-widest text-slate-600 mb-4 text-center">Quick Demo Access</p>
+          <motion.div
+            variants={itemVariants}
+            className="mt-8 pt-8 border-t-2 border-slate-200"
+          >
+            <p className="text-xs font-bold uppercase tracking-widest text-slate-600 mb-4 text-center">
+              Quick Demo Access
+            </p>
             <div className="grid grid-cols-2 gap-3">
               {DEMO_ACCOUNTS.map((acct, i) => (
                 <motion.button
@@ -271,7 +345,9 @@ const Login = () => {
                   onMouseLeave={() => setHoveredDemo(null)}
                   onClick={() => handleDemoLogin(acct)}
                   className={`py-3 px-4 rounded-xl font-bold text-sm transition-all duration-300 bg-white border-2 border-slate-200 hover:border-teal-500 ${
-                    hoveredDemo === i ? `bg-gradient-to-r ${acct.color} text-white shadow-lg` : "text-slate-700"
+                    hoveredDemo === i
+                      ? `bg-gradient-to-r ${acct.color} text-white shadow-lg`
+                      : "text-slate-700"
                   }`}
                 >
                   <div className="text-xl mb-1">{acct.icon}</div>
@@ -279,13 +355,22 @@ const Login = () => {
                 </motion.button>
               ))}
             </div>
-            <p className="text-xs text-slate-400 text-center mt-3 font-medium">Password: <span className="font-bold text-slate-600">demo1234</span></p>
+            <p className="text-xs text-slate-400 text-center mt-3 font-medium">
+              Password:{" "}
+              <span className="font-bold text-slate-600">demo1234</span>
+            </p>
           </motion.div>
 
           {/* Footer */}
-          <motion.p variants={itemVariants} className="text-center mt-8 text-slate-600 font-medium">
+          <motion.p
+            variants={itemVariants}
+            className="text-center mt-8 text-slate-600 font-medium"
+          >
             Don't have an account?{" "}
-            <Link to="/signup" className="text-teal-600 font-bold hover:text-emerald-600 transition-colors">
+            <Link
+              to="/signup"
+              className="text-teal-600 font-bold hover:text-emerald-600 transition-colors"
+            >
               Create one now
             </Link>
           </motion.p>
