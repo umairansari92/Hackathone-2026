@@ -49,6 +49,17 @@ import InviteDoctor from "./pages/InviteDoctor";
 import DoctorRequests from "./pages/DoctorRequests";
 import DoctorRegister from "./pages/DoctorRegister";
 
+// New Module pages
+import OpdModule from "./pages/OpdModule";
+import LabModule from "./pages/LabModule";
+import UltrasoundModule from "./pages/UltrasoundModule";
+import PharmacyModule from "./pages/PharmacyModule";
+import AccountsModule from "./pages/AccountsModule";
+import SupervisorDashboard from "./pages/SupervisorDashboard";
+import NurseDashboard from "./pages/NurseDashboard";
+import PatientRecord from "./pages/PatientRecord";
+import PatientPortal from "./pages/PatientPortal";
+
 const App = () => {
   const { user } = useSelector((state) => state.auth);
 
@@ -153,11 +164,105 @@ const App = () => {
               <Route path="/patient-profile" element={<PatientProfile />} />
             </Route>
 
+            {/* ── Nurse ── */}
+            <Route element={<ProtectedRoute allowedRoles={["Nurse"]} />}>
+              <Route path="/nurse-dashboard" element={<NurseDashboard />} />
+            </Route>
+
+            {/* ── Lab Staff ── */}
+            <Route element={<ProtectedRoute allowedRoles={["LabStaff"]} />}>
+              <Route path="/labstaff-dashboard" element={<LabModule />} />
+            </Route>
+
+            {/* ── Pharmacist ── */}
+            <Route element={<ProtectedRoute allowedRoles={["Pharmacist"]} />}>
+              <Route
+                path="/pharmacist-dashboard"
+                element={<PharmacyModule />}
+              />
+            </Route>
+
+            {/* ── Accountant ── */}
+            <Route element={<ProtectedRoute allowedRoles={["Accountant"]} />}>
+              <Route
+                path="/accountant-dashboard"
+                element={<AccountsModule />}
+              />
+            </Route>
+
+            {/* ── Supervisor ── */}
+            <Route element={<ProtectedRoute allowedRoles={["Supervisor"]} />}>
+              <Route
+                path="/supervisor-dashboard"
+                element={<SupervisorDashboard />}
+              />
+            </Route>
+
+            {/* ── New Modules (multi-role) ── */}
+            <Route
+              element={
+                <ProtectedRoute
+                  allowedRoles={[
+                    "Admin",
+                    "Doctor",
+                    "Receptionist",
+                    "Nurse",
+                    "Supervisor",
+                  ]}
+                />
+              }
+            >
+              <Route path="/opd-module" element={<OpdModule />} />
+            </Route>
+            <Route
+              element={
+                <ProtectedRoute
+                  allowedRoles={["Admin", "Doctor", "LabStaff", "Supervisor"]}
+                />
+              }
+            >
+              <Route path="/lab-module" element={<LabModule />} />
+            </Route>
+            <Route
+              element={
+                <ProtectedRoute
+                  allowedRoles={["Admin", "Doctor", "Supervisor"]}
+                />
+              }
+            >
+              <Route path="/ultrasound-module" element={<UltrasoundModule />} />
+            </Route>
+            <Route
+              element={
+                <ProtectedRoute
+                  allowedRoles={["Admin", "Pharmacist", "Supervisor"]}
+                />
+              }
+            >
+              <Route path="/pharmacy-module" element={<PharmacyModule />} />
+            </Route>
+            <Route
+              element={
+                <ProtectedRoute
+                  allowedRoles={["Admin", "Accountant", "Supervisor"]}
+                />
+              }
+            >
+              <Route path="/accounts-module" element={<AccountsModule />} />
+            </Route>
+
             {/* ── Shared (multi-role) ── */}
             <Route
               element={
                 <ProtectedRoute
-                  allowedRoles={["Admin", "Doctor", "Receptionist", "Patient"]}
+                  allowedRoles={[
+                    "Admin",
+                    "Doctor",
+                    "Receptionist",
+                    "Patient",
+                    "Nurse",
+                    "Supervisor",
+                  ]}
                 />
               }
             >
@@ -168,6 +273,28 @@ const App = () => {
                 path="/prescriptions/:id"
                 element={<PrescriptionViewer />}
               />
+            </Route>
+
+            {/* ── Patient Record (Full History) ── */}
+            <Route
+              element={
+                <ProtectedRoute
+                  allowedRoles={[
+                    "Admin",
+                    "Doctor",
+                    "Receptionist",
+                    "Nurse",
+                    "Supervisor",
+                  ]}
+                />
+              }
+            >
+              <Route path="/patient/:id/record" element={<PatientRecord />} />
+            </Route>
+
+            {/* ── Patient Portal (self-service after UID login) ── */}
+            <Route element={<ProtectedRoute allowedRoles={["Patient"]} />}>
+              <Route path="/patient-portal" element={<PatientPortal />} />
             </Route>
           </Route>
         </Routes>

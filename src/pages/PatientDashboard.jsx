@@ -90,9 +90,9 @@ const PatientDashboard = () => {
               Your health overview is ready for review.
             </p>
           </div>
-          <div className="bg-white border border-[#E2E8F0] rounded-[12px] px-5 py-3 shadow-sm flex items-center gap-3">
-            <Calendar size={18} className="text-[#0EA5A4]" />
-            <div className="flex flex-col gap-0.5">
+          <div className="bg-white border border-[#E2E8F0] rounded-[12px] px-6 py-4 shadow-sm flex items-center gap-4">
+            <Calendar size={20} className="text-[#0EA5A4] shrink-0" />
+            <div className="flex flex-col gap-1">
               <p className={labelClass}>Today's Date</p>
               <p className="text-[14px] font-semibold text-[#0F172A]">
                 {new Date().toLocaleDateString("en-US", {
@@ -163,10 +163,10 @@ const PatientDashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left: Upcoming Schedule (8 Columns) */}
           <div className="lg:col-span-8">
-            <div className="bg-white border border-gray-100 rounded-2xl shadow-sm px-8 py-6 h-full">
+            <div className="bg-white border border-gray-100 rounded-2xl shadow-sm px-8 py-8 h-full">
               {/* Header Section */}
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex flex-col gap-1">
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex flex-col gap-2">
                   <h3 className="text-[18px] md:text-[20px] font-bold text-[#0F172A]">
                     Upcoming Schedule
                   </h3>
@@ -183,7 +183,7 @@ const PatientDashboard = () => {
               </div>
 
               {/* Doctors List */}
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-0">
                 {apptLoading ? (
                   <div className="py-10 text-center text-slate-400 font-medium">
                     Syncing profile...
@@ -203,35 +203,35 @@ const PatientDashboard = () => {
                 ) : (
                   upcoming.slice(0, 4).map((appt, i) => (
                     <div key={appt._id}>
-                      <div className="flex items-center justify-between py-3 hover:bg-[#F5F7FA] rounded-lg transition-all duration-200 px-2">
+                      <div className="flex items-center justify-between py-5 px-4 hover:bg-[#F5F7FA] rounded-lg transition-all duration-200">
                         <div className="flex items-center gap-4 min-w-0 flex-1">
-                          <div className="w-11 h-11 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold border border-slate-200 shrink-0 text-[14px]">
+                          <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold border border-slate-200 shrink-0 text-[14px]">
                             {appt.doctorId?.fullname?.charAt(0) || "D"}
                           </div>
                           <div className="min-w-0">
                             <p className="text-[14px] font-bold text-[#0F172A] truncate">
                               Dr. {appt.doctorId?.fullname || "Specialist"}
                             </p>
-                            <p className="text-[12px] text-[#64748B] font-medium uppercase tracking-tight truncate">
+                            <p className="text-[12px] text-[#64748B] font-medium uppercase tracking-tight truncate mt-1">
                               {appt.doctorId?.specialization ||
                                 "General Medicine"}
                             </p>
                           </div>
                         </div>
-                        <div className="flex flex-col items-end gap-1 text-right shrink-0 ml-4">
+                        <div className="flex flex-col items-end gap-2 text-right shrink-0 ml-4">
                           <p className="text-[13px] font-bold text-[#0F172A]">
                             {new Date(appt.date).toLocaleDateString("en-US", {
                               month: "short",
                               day: "numeric",
                             })}
                           </p>
-                          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-cyan-50 text-cyan-700 uppercase tracking-wider">
+                          <span className="text-[10px] font-bold px-3 py-1 rounded-full bg-cyan-50 text-cyan-700 uppercase tracking-wider">
                             {appt.status}
                           </span>
                         </div>
                       </div>
                       {i < Math.min(upcoming.length, 4) - 1 && (
-                        <div className="h-px bg-[#E2E8F0] mx-2" />
+                        <div className="h-px bg-[#E2E8F0]" />
                       )}
                     </div>
                   ))
@@ -243,27 +243,27 @@ const PatientDashboard = () => {
           {/* Right: Queue + Actions (4 Columns) */}
           <div className="lg:col-span-4 flex flex-col gap-6">
             {/* Live Queue - Deep Navy Card */}
-            <div className="bg-[#0F172A] rounded-[16px] p-6 text-white shadow-lg relative overflow-hidden flex flex-col justify-between min-h-[220px]">
+            <div className="bg-[#0F172A] rounded-[16px] p-8 text-white shadow-lg relative overflow-hidden flex flex-col justify-between min-h-[240px]">
               <div className="absolute -top-4 -right-4 opacity-5 pointer-events-none">
                 <Activity size={80} />
               </div>
 
-              <div className="relative z-10 flex flex-col gap-6 h-full">
+              <div className="relative z-10 flex flex-col gap-8 h-full">
                 <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
+                  <div className="flex flex-col gap-2">
                     <p className="text-[12px] uppercase tracking-[0.2em] text-[#0EA5A4] font-black">
                       Live Queue
                     </p>
-                    <p className="text-[10px] text-slate-500 font-bold">
+                    <p className="text-[11px] text-slate-500 font-bold">
                       Real-time update
                     </p>
                   </div>
-                  <Ticket size={24} className="text-[#0EA5A4]/40" />
+                  <Ticket size={28} className="text-[#0EA5A4]/40" />
                 </div>
 
                 {!queueData?.hasToken ? (
-                  <div className="flex-1 flex flex-col items-center justify-center text-center gap-3">
-                    <p className="text-[14px] font-semibold text-slate-400">
+                  <div className="flex-1 flex flex-col items-center justify-center text-center gap-4">
+                    <p className="text-[15px] font-semibold text-slate-400">
                       No active token session.
                     </p>
                     <Link
@@ -274,21 +274,21 @@ const PatientDashboard = () => {
                     </Link>
                   </div>
                 ) : (
-                  <div className="flex flex-col gap-6">
-                    <div className="flex items-end justify-between border-b border-white/5 pb-4">
-                      <div className="flex flex-col gap-1">
-                        <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">
+                  <div className="flex flex-col gap-8">
+                    <div className="flex items-end justify-between border-b border-white/10 pb-6">
+                      <div className="flex flex-col gap-2">
+                        <p className="text-[11px] text-slate-500 uppercase tracking-widest font-black">
                           Your Token
                         </p>
-                        <h2 className="text-[48px] font-black text-[#0EA5A4] leading-none tracking-tighter">
+                        <h2 className="text-[56px] font-black text-[#0EA5A4] leading-none tracking-tighter">
                           #{queueData.tokenNumber}
                         </h2>
                       </div>
                       <div className="text-right">
-                        <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">
+                        <p className="text-[11px] text-slate-500 uppercase tracking-widest font-black">
                           Est. Wait
                         </p>
-                        <p className="text-[20px] font-black text-white">
+                        <p className="text-[24px] font-black text-white">
                           {queueData.queueStats?.estimatedWaitMins || 0}m
                         </p>
                       </div>

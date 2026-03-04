@@ -65,12 +65,12 @@ const StatCard = ({ title, value, icon, gradient, trend, trendUp, delay }) => (
       backdropFilter: "blur(16px)",
       border: "1px solid rgba(255,255,255,0.9)",
       borderRadius: 18,
-      padding: "22px 24px",
+      padding: "24px 26px",
       boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
       display: "flex",
       justifyContent: "space-between",
       alignItems: "flex-start",
-      gap: 12,
+      gap: 14,
     }}
   >
     <div>
@@ -81,7 +81,7 @@ const StatCard = ({ title, value, icon, gradient, trend, trendUp, delay }) => (
           color: "#94a3b8",
           textTransform: "uppercase",
           letterSpacing: "0.06em",
-          marginBottom: 6,
+          marginBottom: 8,
         }}
       >
         {title}
@@ -92,7 +92,7 @@ const StatCard = ({ title, value, icon, gradient, trend, trendUp, delay }) => (
           fontWeight: 800,
           color: "#0f172a",
           lineHeight: 1,
-          marginBottom: 8,
+          marginBottom: 12,
         }}
       >
         {value}
@@ -193,14 +193,14 @@ const DoctorDashboard = () => {
       <motion.div
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        style={{ marginBottom: 28 }}
+        style={{ marginBottom: 32 }}
       >
         <h2
           style={{
             fontSize: "1.65rem",
             fontWeight: 800,
             color: "#0f172a",
-            marginBottom: 4,
+            marginBottom: 8,
           }}
         >
           Dashboard
@@ -217,8 +217,8 @@ const DoctorDashboard = () => {
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(4, 1fr)",
-          gap: 18,
-          marginBottom: 22,
+          gap: 20,
+          marginBottom: 28,
         }}
       >
         <StatCard
@@ -264,8 +264,8 @@ const DoctorDashboard = () => {
         style={{
           display: "grid",
           gridTemplateColumns: "1fr 1fr 1fr",
-          gap: 18,
-          marginBottom: 22,
+          gap: 20,
+          marginBottom: 28,
         }}
       >
         {/* Quick Actions — 2 cols */}
@@ -559,7 +559,7 @@ const DoctorDashboard = () => {
         {/* Table header */}
         <div
           style={{
-            padding: "18px 24px",
+            padding: "20px 24px",
             borderBottom: "1px solid #f1f5f9",
             display: "flex",
             justifyContent: "space-between",
@@ -567,7 +567,7 @@ const DoctorDashboard = () => {
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <Calendar size={17} color="#0d9488" />
+            <Calendar size={18} color="#0d9488" />
             <h3
               style={{ fontWeight: 700, color: "#1e293b", fontSize: "0.95rem" }}
             >
@@ -578,9 +578,9 @@ const DoctorDashboard = () => {
                 background: "#0d9488",
                 color: "white",
                 borderRadius: 20,
-                fontSize: "0.65rem",
+                fontSize: "0.7rem",
                 fontWeight: 800,
-                padding: "2px 8px",
+                padding: "4px 10px",
               }}
             >
               {scheduleRows.length}
@@ -617,9 +617,9 @@ const DoctorDashboard = () => {
                   <th
                     key={h}
                     style={{
-                      padding: "11px 22px",
+                      padding: "14px 22px",
                       textAlign: "left",
-                      fontSize: "0.65rem",
+                      fontSize: "0.7rem",
                       fontWeight: 700,
                       color: "#94a3b8",
                       letterSpacing: "0.07em",
@@ -645,9 +645,9 @@ const DoctorDashboard = () => {
                     (e.currentTarget.style.background = "transparent")
                   }
                 >
-                  <td style={{ padding: "13px 22px" }}>
+                  <td style={{ padding: "16px 22px" }}>
                     <div
-                      style={{ display: "flex", alignItems: "center", gap: 10 }}
+                      style={{ display: "flex", alignItems: "center", gap: 12 }}
                     >
                       <div
                         style={{
@@ -674,9 +674,9 @@ const DoctorDashboard = () => {
                   </td>
                   <td
                     style={{
-                      padding: "13px 22px",
+                      padding: "16px 22px",
                       color: "#475569",
-                      fontWeight: 500,
+                      fontWeight: 600,
                     }}
                   >
                     {item.time}

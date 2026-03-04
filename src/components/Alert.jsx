@@ -15,31 +15,31 @@ export const Alert = ({
   const typeConfig = {
     info: {
       icon: Info,
-      bg: "from-blue-50 to-blue-50",
-      border: "border-blue-200/50",
-      text: "text-blue-700",
-      accent: "bg-blue-500",
+      bg: "rgba(2, 132, 199, 0.05)",
+      border: "1px solid rgba(2, 132, 199, 0.2)",
+      text: "var(--info)",
+      accent: "var(--info)",
     },
     success: {
       icon: CheckCircle,
-      bg: "from-emerald-50 to-emerald-50",
-      border: "border-emerald-200/50",
-      text: "text-emerald-700",
-      accent: "bg-emerald-500",
+      bg: "rgba(16, 185, 129, 0.05)",
+      border: "1px solid rgba(16, 185, 129, 0.2)",
+      text: "var(--success)",
+      accent: "var(--success)",
     },
     warning: {
       icon: AlertTriangle,
-      bg: "from-amber-50 to-amber-50",
-      border: "border-amber-200/50",
-      text: "text-amber-700",
-      accent: "bg-amber-500",
+      bg: "rgba(245, 158, 11, 0.05)",
+      border: "1px solid rgba(245, 158, 11, 0.2)",
+      text: "var(--warning)",
+      accent: "var(--warning)",
     },
     error: {
       icon: AlertCircle,
-      bg: "from-rose-50 to-rose-50",
-      border: "border-rose-200/50",
-      text: "text-rose-700",
-      accent: "bg-rose-500",
+      bg: "rgba(239, 68, 68, 0.05)",
+      border: "1px solid rgba(239, 68, 68, 0.2)",
+      text: "var(--danger)",
+      accent: "var(--danger)",
     },
   };
 
@@ -50,20 +50,39 @@ export const Alert = ({
     <motion.div
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`glass-card p-4 border ${config.border} bg-gradient-to-r ${config.bg} ${className}`}
+      style={{
+        background: config.bg,
+        border: config.border,
+      }}
+      className={`glass-card p-4 ${className}`}
     >
       <div className="flex items-start gap-4">
-        <div className={`${config.accent} p-2 rounded-lg text-white flex-shrink-0`}>
+        <div
+          style={{ background: config.accent }}
+          className="p-2 rounded-lg text-white flex-shrink-0"
+        >
           <Icon size={20} />
         </div>
         <div className="flex-1 min-w-0">
-          {title && <h4 className={`font-bold ${config.text}`}>{title}</h4>}
-          {message && <p className={`text-sm ${config.text} mt-1`}>{message}</p>}
+          {title && (
+            <h4 style={{ color: config.text }} className="font-bold">
+              {title}
+            </h4>
+          )}
+          {message && (
+            <p style={{ color: config.text }} className="text-sm mt-1">
+              {message}
+            </p>
+          )}
         </div>
         {action && (
           <button
             onClick={action.onClick}
-            className={`text-sm font-bold px-3 py-1.5 rounded-lg ${config.accent} text-white hover:opacity-90 transition-opacity flex-shrink-0`}
+            style={{
+              background: config.accent,
+              color: "white",
+            }}
+            className="text-sm font-bold px-3 py-1.5 rounded-lg hover:opacity-90 transition-opacity flex-shrink-0"
           >
             {action.label}
           </button>
@@ -85,10 +104,10 @@ export const Toast = ({ type = "info", title, message, duration = 4000, onClose 
   }, [duration, onClose]);
 
   const typeConfig = {
-    info: { bg: "from-blue-500 to-blue-600", icon: Info },
-    success: { bg: "from-emerald-500 to-emerald-600", icon: CheckCircle },
-    warning: { bg: "from-amber-500 to-amber-600", icon: AlertTriangle },
-    error: { bg: "from-rose-500 to-rose-600", icon: AlertCircle },
+    info: { bg: "var(--info)", icon: Info },
+    success: { bg: "var(--success)", icon: CheckCircle },
+    warning: { bg: "var(--warning)", icon: AlertTriangle },
+    error: { bg: "var(--danger)", icon: AlertCircle },
   };
 
   const config = typeConfig[type];
@@ -99,7 +118,8 @@ export const Toast = ({ type = "info", title, message, duration = 4000, onClose 
       initial={{ opacity: 0, x: 100 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 100 }}
-      className={`bg-gradient-to-r ${config.bg} text-white rounded-xl p-4 shadow-2xl flex items-start gap-3 max-w-sm`}
+      style={{ background: config.bg }}
+      className="text-white rounded-xl p-4 shadow-2xl flex items-start gap-3 max-w-sm"
     >
       <Icon size={20} className="flex-shrink-0 mt-0.5" />
       <div className="flex-1">

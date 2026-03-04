@@ -10,7 +10,7 @@ import {
   LogOut,
   Brain,
   Stethoscope,
-  ChevronLeft,
+  ChevronRight,
   Settings,
   BarChart3,
   UserCog,
@@ -20,6 +20,13 @@ import {
   Activity,
   UserCircle,
   Mail,
+  FlaskConical,
+  Scan,
+  Pill,
+  DollarSign,
+  Heart,
+  ClipboardList,
+  Layers,
 } from "lucide-react";
 
 /**
@@ -46,9 +53,19 @@ const Sidebar = () => {
       title: "Dashboard",
       icon: <LayoutDashboard size={20} />,
       path: `/${userRole.toLowerCase()}-dashboard`,
-      roles: ["Admin", "Doctor", "Receptionist", "Patient"],
+      roles: [
+        "Admin",
+        "Doctor",
+        "Receptionist",
+        "Patient",
+        "Nurse",
+        "LabStaff",
+        "Pharmacist",
+        "Accountant",
+        "Supervisor",
+      ],
     },
-    // Admin Only
+    // ─── Admin Only ───
     {
       title: "Manage Doctors",
       icon: <Stethoscope size={20} />,
@@ -73,7 +90,14 @@ const Sidebar = () => {
       path: "/admin/doctor-requests",
       roles: ["Admin"],
     },
-    // Unified Appointments (Role based path)
+    // ─── OPD Module ───
+    {
+      title: "OPD Queue",
+      icon: <Layers size={20} />,
+      path: "/opd-module",
+      roles: ["Admin", "Doctor", "Receptionist", "Nurse", "Supervisor"],
+    },
+    // ─── Appointments ───
     {
       title: userRole === "Patient" ? "My Appointments" : "Appointments",
       icon: <Calendar size={20} />,
@@ -81,35 +105,35 @@ const Sidebar = () => {
         userRole === "Patient" ? "/patient/my-appointments" : "/appointments",
       roles: ["Admin", "Doctor", "Receptionist", "Patient"],
     },
-    // Unified Prescriptions
+    // ─── Prescriptions ───
     {
       title: "Prescriptions",
       icon: <FileText size={20} />,
       path: "/prescriptions",
       roles: ["Admin", "Doctor", "Patient"],
     },
-    // Patient Search / Patients Directory
+    // ─── Patients ───
     {
       title: "Patients Profile",
       icon: <Users size={20} />,
       path: "/patients",
-      roles: ["Doctor", "Receptionist"],
+      roles: ["Doctor", "Receptionist", "Nurse"],
     },
-    // Booking
+    // ─── Booking ───
     {
       title: "Book Appointment",
       icon: <Ticket size={20} />,
       path: userRole === "Patient" ? "/patient/book" : "/book-appointment",
       roles: ["Receptionist", "Patient"],
     },
-    // Queue
+    // ─── Queue ───
     {
       title: userRole === "Patient" ? "Queue Status" : "Token Queue",
       icon: <Hash size={20} />,
       path: userRole === "Patient" ? "/patient/my-queue" : "/token-queue",
       roles: ["Receptionist", "Patient"],
     },
-    // Doctor Specific
+    // ─── Doctor Specific ───
     {
       title: "Smart Diagnosis",
       icon: <Brain size={20} />,
@@ -122,7 +146,42 @@ const Sidebar = () => {
       path: "/doctor-schedule",
       roles: ["Receptionist"],
     },
-    // Patient Specific
+    // ─── Lab Module ───
+    {
+      title: "Lab Module",
+      icon: <FlaskConical size={20} />,
+      path: "/lab-module",
+      roles: ["Admin", "Doctor", "LabStaff", "Supervisor"],
+    },
+    // ─── Ultrasound Module ───
+    {
+      title: "Ultrasound",
+      icon: <Scan size={20} />,
+      path: "/ultrasound-module",
+      roles: ["Admin", "Doctor", "Supervisor"],
+    },
+    // ─── Pharmacy Module ───
+    {
+      title: "Pharmacy",
+      icon: <Pill size={20} />,
+      path: "/pharmacy-module",
+      roles: ["Admin", "Pharmacist", "Supervisor"],
+    },
+    // ─── Accounts Module ───
+    {
+      title: "Accounts",
+      icon: <DollarSign size={20} />,
+      path: "/accounts-module",
+      roles: ["Admin", "Accountant", "Supervisor"],
+    },
+    // ─── Nurse Specific ───
+    {
+      title: "Vitals & Queue",
+      icon: <Heart size={20} />,
+      path: "/nurse-dashboard",
+      roles: ["Nurse"],
+    },
+    // ─── Patient Specific ───
     {
       title: "Medical History",
       icon: <Activity size={20} />,
@@ -141,137 +200,158 @@ const Sidebar = () => {
     item.roles.includes(userRole),
   );
 
-return (
-  <motion.aside
-    initial={{ x: -300 }}
-    animate={{ x: 0 }}
-    transition={{ type: "spring", stiffness: 80 }}
-    className="w-72 h-screen relative flex flex-col 
-    bg-gradient-to-b from-[#0b1220] via-[#0e1628] to-[#0b1220]
-    text-slate-300 border-r border-white/5 shadow-[0_0_40px_rgba(0,0,0,0.6)] overflow-hidden"
-  >
-    {/* Background Glow */}
-    <div className="absolute -top-32 -left-32 w-96 h-96 bg-cyan-500/10 blur-[120px] rounded-full pointer-events-none" />
-    <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-emerald-500/10 blur-[120px] rounded-full pointer-events-none" />
+  const roleDisplayMap = {
+    Admin: "Hospital Admin",
+    Doctor: "Doctor",
+    Nurse: "Nurse",
+    Receptionist: "Receptionist",
+    LabStaff: "Lab Staff",
+    Pharmacist: "Pharmacist",
+    Accountant: "Accountant",
+    Supervisor: "Supervisor",
+    Patient: "Patient",
+  };
 
-    {/* Brand */}
-    <div className="px-8 pt-8 pb-6">
-      <div className="flex items-center gap-4 group">
-        <motion.div
-          whileHover={{ rotate: 10, scale: 1.08 }}
-          className="p-3 rounded-2xl bg-gradient-to-br from-cyan-400 to-emerald-500 
-          text-white shadow-lg shadow-cyan-500/30"
-        >
-          <Brain size={22} />
-        </motion.div>
+  return (
+    <motion.aside
+      initial={{ x: -300 }}
+      animate={{ x: 0 }}
+      transition={{ type: "spring", stiffness: 80 }}
+      className="w-72 h-screen relative flex flex-col 
+    bg-(--surface) border-r border-(--border) 
+    text-(--text-secondary) shadow-[0_0_40px_rgba(0,0,0,0.15)] overflow-hidden"
+    >
+      {/* Background Glow */}
+      <div className="absolute -top-32 -left-32 w-96 h-96 bg-(--accent)/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-(--accent)/5 blur-[120px] rounded-full pointer-events-none" />
 
-        <div>
-          <h2 className="text-lg font-extrabold text-white tracking-tight">
-            MedClinic <span className="text-cyan-400">AI</span>
-          </h2>
-          <p className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold">
-            Smart Diagnosis System
-          </p>
+      {/* Brand - Al-Shifa Health Care Center */}
+      <div className="px-8 pt-8 pb-6">
+        <div className="flex items-center gap-4 group">
+          <motion.div
+            whileHover={{ rotate: 10, scale: 1.08 }}
+            className="p-3 rounded-2xl bg-linear-to-br from-(--accent) to-(--accent-hover) 
+          text-white shadow-lg shadow-(--accent)/30"
+          >
+            <Stethoscope size={22} />
+          </motion.div>
+
+          <div>
+            <h2 className="text-sm font-extrabold text-(--text-primary) tracking-tight leading-tight">
+              Al-Shifa <br /> Health Care
+            </h2>
+            <p className="text-[9px] uppercase tracking-widest text-(--text-muted) font-semibold mt-1">
+              Medical Management Center
+            </p>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mx-6 mb-4" />
+      <div className="h-px bg-gradient-to-r from-transparent via-(--border) to-transparent mx-6 mb-4" />
 
-    {/* Navigation */}
-    <nav className="flex-1 px-4 space-y-2 overflow-y-auto">
-      {menuItems.map((item, idx) => {
-        const isActive =
-          location.pathname === item.path ||
-          (item.path !== "/" && location.pathname.startsWith(item.path));
+      {/* Navigation */}
+      <nav className="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
+        {menuItems.map((item, idx) => {
+          const isActive =
+            location.pathname === item.path ||
+            (item.path !== "/" && location.pathname.startsWith(item.path));
 
-        return (
-          <motion.div
-            key={item.title}
-            initial={{ opacity: 0, x: -15 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: idx * 0.05 }}
-          >
-            <Link
-              to={item.path}
-              className={`relative flex items-center gap-4 px-5 py-3 rounded-xl 
+          return (
+            <motion.div
+              key={item.title}
+              initial={{ opacity: 0, x: -15 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: idx * 0.04 }}
+            >
+              <Link
+                to={item.path}
+                className={`relative flex items-center gap-4 px-5 py-3 rounded-xl 
               transition-all duration-300 group ${
                 isActive
-                  ? "bg-gradient-to-r from-cyan-500/10 to-emerald-500/10 text-white shadow-inner border border-cyan-400/20"
-                  : "hover:bg-white/5 text-slate-400 hover:text-white"
+                  ? "bg-(--accent)/10 text-(--text-primary) shadow-inner border border-(--accent)/20"
+                  : "hover:bg-(--hover) text-(--text-secondary) hover:text-(--text-primary)"
               }`}
-            >
-              {/* Active Indicator */}
-              {isActive && (
-                <motion.div
-                  layoutId="active-pill"
-                  className="absolute left-0 top-0 bottom-0 w-1 bg-cyan-400 rounded-r-full"
-                />
-              )}
-
-              <span
-                className={`transition-all duration-300 ${
-                  isActive
-                    ? "text-cyan-400"
-                    : "text-slate-500 group-hover:text-cyan-300"
-                }`}
               >
-                {item.icon}
-              </span>
+                {/* Active Indicator */}
+                {isActive && (
+                  <motion.div
+                    layoutId="active-pill"
+                    className="absolute left-0 top-0 bottom-0 w-1 bg-(--accent) rounded-r-full"
+                  />
+                )}
 
-              <span className="text-sm font-semibold tracking-wide">
-                {item.title}
-              </span>
+                <span
+                  className={`transition-all duration-300 ${
+                    isActive
+                      ? "text-(--accent)"
+                      : "text-(--text-muted) group-hover:text-(--accent)"
+                  }`}
+                >
+                  {item.icon}
+                </span>
 
-              {isActive && (
-                <motion.div
-                  layoutId="active-glow"
-                  className="absolute inset-0 bg-cyan-400/5 blur-xl rounded-xl"
-                />
-              )}
-            </Link>
-          </motion.div>
-        );
-      })}
-    </nav>
+                <span className="text-sm font-semibold tracking-wide flex-1">
+                  {item.title}
+                </span>
 
-    {/* User Footer */}
-    <div className="p-5">
-      <div
-        className="relative flex items-center gap-4 p-4 rounded-2xl 
-        bg-white/5 backdrop-blur-xl border border-white/10"
-      >
-        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-500 to-emerald-500 
-        flex items-center justify-center text-white font-bold shadow-md">
-          {isAdmin ? "SA" : user?.fullname?.charAt(0).toUpperCase() || "U"}
-        </div>
+                {isActive && (
+                  <ChevronRight
+                    size={14}
+                    className="text-(--accent) opacity-60"
+                  />
+                )}
 
-        <div className="flex-1 min-w-0">
-          <h4 className="text-sm font-semibold text-white truncate">
-            {user?.fullname}
-          </h4>
-          <p className="text-xs text-slate-400 uppercase tracking-wider">
-            {isAdmin ? "Super Admin" : userRole}
-          </p>
-        </div>
+                {isActive && (
+                  <motion.div
+                    layoutId="active-glow"
+                    className="absolute inset-0 bg-(--accent)/5 blur-xl rounded-xl"
+                  />
+                )}
+              </Link>
+            </motion.div>
+          );
+        })}
+      </nav>
 
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={handleLogout}
-          className="w-9 h-9 rounded-lg flex items-center justify-center 
-          bg-white/5 hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition"
+      {/* User Footer */}
+      <div className="p-5">
+        <div
+          className="relative flex items-center gap-4 p-4 rounded-2xl 
+        bg-(--accent)/5 backdrop-blur-xl border border-(--border)"
         >
-          <LogOut size={16} />
-        </motion.button>
-      </div>
+          <div
+            className="w-11 h-11 rounded-xl bg-linear-to-br from-(--accent) to-(--accent-hover) 
+        flex items-center justify-center text-white font-bold shadow-md"
+          >
+            {user?.fullname?.charAt(0).toUpperCase() || "U"}
+          </div>
 
-      <p className="text-center text-[9px] text-slate-600 mt-4 tracking-widest uppercase">
-        Powered by AI Engine
-      </p>
-    </div>
-  </motion.aside>
-);
+          <div className="flex-1 min-w-0">
+            <h4 className="text-sm font-semibold text-(--text-primary) truncate">
+              {user?.fullname}
+            </h4>
+            <p className="text-xs text-(--text-muted) uppercase tracking-wider">
+              {roleDisplayMap[userRole] || userRole}
+            </p>
+          </div>
+
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={handleLogout}
+            className="w-9 h-9 rounded-lg flex items-center justify-center 
+          bg-(--hover) hover:bg-(--danger)/20 text-(--text-secondary) hover:text-(--danger) transition"
+          >
+            <LogOut size={16} />
+          </motion.button>
+        </div>
+
+        <p className="text-center text-[9px] text-(--text-muted) mt-4 tracking-widest uppercase">
+          Al-Shifa Healthcare Center
+        </p>
+      </div>
+    </motion.aside>
+  );
 };
 
 export default Sidebar;

@@ -187,7 +187,7 @@ const Login = () => {
         initial={{ opacity: 0, x: 30 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8 }}
-        className="flex-1 flex flex-col justify-center items-center bg-gradient-to-br from-white via-slate-50 to-slate-100 p-6 lg:p-0"
+        className="flex-1 flex flex-col justify-center items-center bg-[var(--bg)] p-6 lg:p-0"
       >
         <motion.div
           variants={containerVariants}
@@ -198,13 +198,13 @@ const Login = () => {
           {/* Header */}
           <motion.div variants={itemVariants} className="mb-8">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white shadow-lg">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--accent)] to-[var(--accent-hover)] flex items-center justify-center text-white shadow-lg">
                 <Stethoscope size={24} />
               </div>
               <div>
-                <h2 className="text-2xl font-black text-slate-900">Welcome</h2>
-                <p className="text-xs font-semibold text-teal-600 tracking-widest uppercase">
-                  Al Shifa
+                <h2 className="text-2xl font-black text-[var(--text-primary)]">Welcome</h2>
+                <p className="text-xs font-semibold text-[var(--accent)] tracking-widest uppercase">
+                  Al-Shifa Health Care Center
                 </p>
               </div>
             </div>
@@ -212,8 +212,8 @@ const Login = () => {
 
           {/* Heading */}
           <motion.div variants={itemVariants} className="mb-8">
-            <h1 className="text-3xl font-black text-slate-900 mb-2">Sign In</h1>
-            <p className="text-slate-600 font-medium">
+            <h1 className="text-3xl font-black text-[var(--text-primary)] mb-2">Sign In</h1>
+            <p className="text-[var(--text-secondary)] font-medium">
               Access your clinic dashboard securely
             </p>
           </motion.div>
@@ -222,11 +222,9 @@ const Login = () => {
           {isError && (
             <motion.div
               variants={itemVariants}
-              className="mb-6 p-4 bg-rose-50 border border-rose-100 rounded-2xl flex items-center gap-3 text-rose-600 font-bold text-sm shadow-sm"
+              className="error-message mb-6 flex items-center gap-3"
             >
-              <div className="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center text-lg">
-                ⚠️
-              </div>
+              <div className="text-lg">⚠️</div>
               <p className="flex-1">
                 {message || "Invalid credentials. Please try again."}
               </p>
@@ -236,7 +234,7 @@ const Login = () => {
           <form onSubmit={onSubmit} className="space-y-6">
             {/* Role Selection */}
             <motion.div variants={itemVariants}>
-              <p className="text-xs font-bold uppercase tracking-widest text-slate-600 mb-3">
+              <p className="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-3">
                 Select Your Role
               </p>
               <div className="grid grid-cols-2 gap-3">
@@ -248,8 +246,8 @@ const Login = () => {
                     onClick={() => handleRoleSelect(role)}
                     className={`py-3 px-4 rounded-xl font-bold text-sm transition-all duration-300 ${
                       activeRole === role
-                        ? "bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-lg shadow-teal-500/30"
-                        : "bg-white border-2 border-slate-200 text-slate-700 hover:border-teal-500"
+                        ? "bg-gradient-to-r from-[var(--accent)] to-[var(--accent-hover)] text-white shadow-lg shadow-[var(--accent)]/30"
+                        : "bg-[var(--surface)] border-2 border-[var(--border)] text-[var(--text-primary)] hover:border-[var(--accent)]"
                     }`}
                   >
                     {role}
@@ -260,8 +258,8 @@ const Login = () => {
 
             {/* Email Field */}
             <motion.div variants={itemVariants}>
-              <label className="form-group label text-sm font-bold text-slate-900 mb-2 block">
-                <User size={16} className="inline mr-2 text-teal-600" />
+              <label className="form-group label text-sm font-bold text-[var(--text-primary)] mb-2 block">
+                <User size={16} className="inline mr-2 text-[var(--accent)]" />
                 Email Address
               </label>
               <input
@@ -277,8 +275,8 @@ const Login = () => {
 
             {/* Password Field */}
             <motion.div variants={itemVariants}>
-              <label className="form-group label text-sm font-bold text-slate-900 mb-2 block">
-                <Lock size={16} className="inline mr-2 text-teal-600" />
+              <label className="form-group label text-sm font-bold text-[var(--text-primary)] mb-2 block">
+                <Lock size={16} className="inline mr-2 text-[var(--accent)]" />
                 Password
               </label>
               <div className="relative">
@@ -296,7 +294,7 @@ const Login = () => {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setShowPassword((p) => !p)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-teal-600 transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors"
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </motion.button>
@@ -329,9 +327,9 @@ const Login = () => {
           {/* Demo Accounts Section */}
           <motion.div
             variants={itemVariants}
-            className="mt-8 pt-8 border-t-2 border-slate-200"
+            className="mt-8 pt-8 border-t-2 border-[var(--border)]"
           >
-            <p className="text-xs font-bold uppercase tracking-widest text-slate-600 mb-4 text-center">
+            <p className="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-4 text-center">
               Quick Demo Access
             </p>
             <div className="grid grid-cols-2 gap-3">
@@ -344,10 +342,10 @@ const Login = () => {
                   onMouseEnter={() => setHoveredDemo(i)}
                   onMouseLeave={() => setHoveredDemo(null)}
                   onClick={() => handleDemoLogin(acct)}
-                  className={`py-3 px-4 rounded-xl font-bold text-sm transition-all duration-300 bg-white border-2 border-slate-200 hover:border-teal-500 ${
+                  className={`py-3 px-4 rounded-xl font-bold text-sm transition-all duration-300 bg-[var(--surface)] border-2 border-[var(--border)] hover:border-[var(--accent)] ${
                     hoveredDemo === i
                       ? `bg-gradient-to-r ${acct.color} text-white shadow-lg`
-                      : "text-slate-700"
+                      : "text-[var(--text-primary)]"
                   }`}
                 >
                   <div className="text-xl mb-1">{acct.icon}</div>
@@ -355,21 +353,21 @@ const Login = () => {
                 </motion.button>
               ))}
             </div>
-            <p className="text-xs text-slate-400 text-center mt-3 font-medium">
+            <p className="text-xs text-[var(--text-muted)] text-center mt-3 font-medium">
               Password:{" "}
-              <span className="font-bold text-slate-600">demo1234</span>
+              <span className="font-bold text-[var(--text-secondary)]">demo1234</span>
             </p>
           </motion.div>
 
           {/* Footer */}
           <motion.p
             variants={itemVariants}
-            className="text-center mt-8 text-slate-600 font-medium"
+            className="text-center mt-8 text-[var(--text-secondary)] font-medium"
           >
             Don't have an account?{" "}
             <Link
               to="/signup"
-              className="text-teal-600 font-bold hover:text-emerald-600 transition-colors"
+              className="text-[var(--accent)] font-bold hover:text-[var(--accent-hover)] transition-colors"
             >
               Create one now
             </Link>

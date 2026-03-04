@@ -29,12 +29,12 @@ export const DataTable = ({
   return (
     <div className={`glass-card overflow-hidden ${className}`}>
       {/* Table Header */}
-      <div className="hidden md:grid gap-4 p-6 bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200/50 font-bold text-sm text-slate-700 uppercase tracking-wide"
+      <div className="hidden md:grid gap-4 p-6 bg-[var(--hover)] border-b border-[var(--border)] font-bold text-sm text-[var(--text-primary)] uppercase tracking-wide"
         style={{
           gridTemplateColumns: columns.map((col) => col.width || "1fr").join(" "),
         }}>
         {columns.map((col) => (
-          <div key={col.key} className="flex items-center gap-2 cursor-pointer hover:text-teal-700 transition-colors">
+          <div key={col.key} className="flex items-center gap-2 cursor-pointer hover:text-[var(--accent)] transition-colors">
             {col.label}
             {col.sortable && <ChevronUp size={14} className="opacity-40" />}
           </div>
@@ -46,15 +46,15 @@ export const DataTable = ({
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="divide-y divide-slate-200/50"
+        className="divide-y divide-[var(--border)]"
       >
         {data.map((row, idx) => (
           <motion.div
             key={row._id || idx}
             variants={rowVariants}
             className={`grid gap-4 p-5 items-center cursor-pointer transition-all ${
-              hoverable ? "hover:bg-teal-50" : ""
-            } ${striped && idx % 2 === 0 ? "bg-slate-50/30" : ""}`}
+              hoverable ? "hover:bg-[var(--hover)]" : ""
+            } ${striped && idx % 2 === 0 ? "bg-[var(--surface-2)]/30" : ""}`}
             style={{
               gridTemplateColumns: columns
                 .map((col) => col.width || "1fr")
@@ -68,25 +68,31 @@ export const DataTable = ({
                   col.render(row[col.key], row)
                 ) : col.type === "status" ? (
                   <span
-                    className={`inline-block px-3 py-1.5 rounded-full text-xs font-bold ${
-                      row[col.key] === "Active"
-                        ? "bg-emerald-100 text-emerald-700"
+                    style={{
+                      background: row[col.key] === "Active" 
+                        ? "rgba(16, 185, 129, 0.1)" 
                         : row[col.key] === "Inactive"
-                          ? "bg-slate-100 text-slate-700"
-                          : "bg-amber-100 text-amber-700"
-                    }`}
+                          ? "rgba(149, 163, 184, 0.1)"
+                          : "rgba(245, 158, 11, 0.1)",
+                      color: row[col.key] === "Active" 
+                        ? "var(--success)" 
+                        : row[col.key] === "Inactive"
+                          ? "var(--text-muted)"
+                          : "var(--warning)"
+                    }}
+                    className="inline-block px-3 py-1.5 rounded-full text-xs font-bold"
                   >
                     {row[col.key]}
                   </span>
                 ) : col.type === "email" ? (
                   <a
                     href={`mailto:${row[col.key]}`}
-                    className="text-teal-600 hover:text-teal-700 font-medium"
+                    className="text-[var(--accent)] hover:text-[var(--accent-hover)] font-medium"
                   >
                     {row[col.key]}
                   </a>
                 ) : (
-                  <span className="text-slate-700 font-medium">{row[col.key]}</span>
+                  <span className="text-[var(--text-secondary)] font-medium">{row[col.key]}</span>
                 )}
               </div>
             ))}
@@ -98,8 +104,8 @@ export const DataTable = ({
       {data.length === 0 && (
         <div className="p-12 text-center">
           <div className="text-4xl mb-3">📭</div>
-          <p className="text-slate-600 font-semibold">No data available</p>
-          <p className="text-slate-500 text-sm">Try adjusting your filters or search criteria</p>
+          <p className="text-[var(--text-secondary)] font-semibold">No data available</p>
+          <p className="text-[var(--text-muted)] text-sm">Try adjusting your filters or search criteria</p>
         </div>
       )}
     </div>

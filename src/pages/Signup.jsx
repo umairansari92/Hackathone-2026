@@ -182,7 +182,7 @@ const Signup = () => {
         initial={{ opacity: 0, x: 30 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8 }}
-        className="flex-1 flex flex-col justify-center items-center bg-gradient-to-br from-white via-slate-50 to-slate-100 p-6 lg:p-0 overflow-y-auto"
+        className="flex-1 flex flex-col justify-center items-center bg-[var(--bg)] p-6 lg:p-0 overflow-y-auto"
       >
         <motion.div
           variants={containerVariants}
@@ -193,13 +193,15 @@ const Signup = () => {
           {/* Header */}
           <motion.div variants={itemVariants} className="mb-8">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white shadow-lg">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--accent)] to-[var(--accent-hover)] flex items-center justify-center text-white shadow-lg">
                 <Heart size={24} />
               </div>
               <div>
-                <h2 className="text-2xl font-black text-slate-900">Al Shifa</h2>
-                <p className="text-xs font-semibold text-teal-600 tracking-widest uppercase">
-                  Hospital
+                <h2 className="text-2xl font-black text-[var(--text-primary)]">
+                  Al-Shifa
+                </h2>
+                <p className="text-xs font-semibold text-[var(--accent)] tracking-widest uppercase">
+                  Health Care Center
                 </p>
               </div>
             </div>
@@ -207,10 +209,10 @@ const Signup = () => {
 
           {/* Form title */}
           <motion.div variants={itemVariants} className="mb-8">
-            <h1 className="text-3xl font-black text-slate-900 mb-2">
+            <h1 className="text-3xl font-black text-[var(--text-primary)] mb-2">
               Create Account
             </h1>
-            <p className="text-slate-600 font-medium">
+            <p className="text-[var(--text-secondary)] font-medium">
               Setup your profile in seconds
             </p>
           </motion.div>
@@ -232,7 +234,7 @@ const Signup = () => {
               className="flex flex-col items-center"
             >
               <label className="cursor-pointer group relative">
-                <div className="w-24 h-24 rounded-2xl border-2 border-dashed border-slate-300 group-hover:border-teal-500 flex items-center justify-center bg-slate-50 group-hover:bg-teal-50 transition-all relative overflow-hidden">
+                <div className="w-24 h-24 rounded-2xl border-2 border-dashed border-[var(--border)] group-hover:border-[var(--accent)] flex items-center justify-center bg-[var(--hover)] group-hover:bg-[var(--accent)]/5 transition-all relative overflow-hidden">
                   {imagePreview ? (
                     <img
                       src={imagePreview}
@@ -242,7 +244,7 @@ const Signup = () => {
                   ) : (
                     <Camera
                       size={32}
-                      className="text-slate-400 group-hover:text-teal-600 transition-colors"
+                      className="text-[var(--text-muted)] group-hover:text-[var(--accent)] transition-colors"
                     />
                   )}
                 </div>
@@ -252,7 +254,7 @@ const Signup = () => {
                   onChange={onFileChange}
                   className="hidden"
                 />
-                <p className="text-xs text-slate-500 mt-2 font-medium text-center">
+                <p className="text-xs text-[var(--text-muted)] mt-2 font-medium text-center">
                   {imagePreview ? "Tap to change" : "Upload profile photo"}
                 </p>
               </label>
@@ -260,8 +262,8 @@ const Signup = () => {
 
             {/* Full Name */}
             <motion.div variants={itemVariants}>
-              <label className="form-group label text-sm font-bold text-slate-900 mb-2 block">
-                <User size={16} className="inline mr-2 text-teal-600" />
+              <label className="form-group label text-sm font-bold text-[var(--text-primary)] mb-2 block">
+                <User size={16} className="inline mr-2 text-[var(--accent)]" />
                 Full Name
               </label>
               <input
@@ -277,8 +279,8 @@ const Signup = () => {
 
             {/* Email */}
             <motion.div variants={itemVariants}>
-              <label className="form-group label text-sm font-bold text-slate-900 mb-2 block">
-                <Mail size={16} className="inline mr-2 text-teal-600" />
+              <label className="form-group label text-sm font-bold text-[var(--text-primary)] mb-2 block">
+                <Mail size={16} className="inline mr-2 text-[var(--accent)]" />
                 Email Address
               </label>
               <input
@@ -294,8 +296,8 @@ const Signup = () => {
 
             {/* Password */}
             <motion.div variants={itemVariants}>
-              <label className="form-group label text-sm font-bold text-slate-900 mb-2 block">
-                <Lock size={16} className="inline mr-2 text-teal-600" />
+              <label className="form-group label text-sm font-bold text-[var(--text-primary)] mb-2 block">
+                <Lock size={16} className="inline mr-2 text-[var(--accent)]" />
                 Password (Min 6 chars)
               </label>
               <div className="relative">
@@ -314,7 +316,7 @@ const Signup = () => {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setShowPassword((p) => !p)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-teal-600 transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors"
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </motion.button>
@@ -328,7 +330,7 @@ const Signup = () => {
             >
               {/* Gender */}
               <div>
-                <label className="form-group label text-sm font-bold text-slate-900 mb-2 block">
+                <label className="form-group label text-sm font-bold text-[var(--text-primary)] mb-2 block">
                   Gender
                 </label>
                 <select
@@ -345,19 +347,24 @@ const Signup = () => {
 
               {/* Role */}
               <div>
-                <label className="form-group label text-sm font-bold text-slate-900 mb-2 block flex items-center gap-1">
-                  <Briefcase size={16} className="text-teal-600" />
+                <label className="form-group label text-sm font-bold text-[var(--text-primary)] mb-2 flex items-center gap-1">
+                  <Briefcase size={16} className="text-[var(--accent)]" />
                   Role
                 </label>
                 <select
                   name="role"
                   value={role}
                   onChange={onChange}
-                  className="form-control text-sm font-bold text-teal-600"
+                  className="form-control text-sm font-bold text-[var(--accent)]"
                 >
                   <option value="Patient">Patient</option>
                   <option value="Doctor">Doctor</option>
+                  <option value="Nurse">Nurse</option>
                   <option value="Receptionist">Receptionist</option>
+                  <option value="LabStaff">Lab Staff</option>
+                  <option value="Pharmacist">Pharmacist</option>
+                  <option value="Accountant">Accountant</option>
+                  <option value="Supervisor">Supervisor</option>
                   <option value="Admin">Admin</option>
                 </select>
               </div>
@@ -389,12 +396,12 @@ const Signup = () => {
           {/* Footer */}
           <motion.p
             variants={itemVariants}
-            className="text-center mt-8 text-slate-600 font-medium"
+            className="text-center mt-8 text-[var(--text-secondary)] font-medium"
           >
             Already registered?{" "}
             <Link
               to="/login"
-              className="text-teal-600 font-bold hover:text-emerald-600 transition-colors"
+              className="text-[var(--accent)] font-bold hover:text-[var(--accent-hover)] transition-colors"
             >
               Sign in now
             </Link>
@@ -403,14 +410,16 @@ const Signup = () => {
           {/* Terms */}
           <motion.p
             variants={itemVariants}
-            className="text-center text-xs text-slate-500 mt-4 leading-relaxed"
+            className="text-center text-xs text-[var(--text-muted)] mt-4 leading-relaxed"
           >
             By creating an account, you agree to our{" "}
-            <span className="text-slate-700 font-semibold">
+            <span className="text-[var(--text-secondary)] font-semibold">
               Terms of Service
             </span>{" "}
             and{" "}
-            <span className="text-slate-700 font-semibold">Privacy Policy</span>
+            <span className="text-[var(--text-secondary)] font-semibold">
+              Privacy Policy
+            </span>
           </motion.p>
         </motion.div>
       </motion.div>

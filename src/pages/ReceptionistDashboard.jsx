@@ -31,12 +31,12 @@ const StatCard = ({ title, value, icon, color, bg, i }) => (
       backdropFilter: "blur(16px)",
       border: "1px solid rgba(255,255,255,0.9)",
       borderRadius: 18,
-      padding: "18px 22px",
+      padding: "20px 24px",
       boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      gap: 12,
+      gap: 14,
     }}
   >
     <div>
@@ -47,7 +47,7 @@ const StatCard = ({ title, value, icon, color, bg, i }) => (
           color: "#94a3b8",
           textTransform: "uppercase",
           letterSpacing: "0.07em",
-          marginBottom: 6,
+          marginBottom: 8,
         }}
       >
         {title}
@@ -65,8 +65,8 @@ const StatCard = ({ title, value, icon, color, bg, i }) => (
     </div>
     <div
       style={{
-        width: 46,
-        height: 46,
+        width: 52,
+        height: 52,
         borderRadius: 12,
         background: bg,
         display: "flex",
@@ -117,19 +117,19 @@ const ReceptionistDashboard = () => {
         initial="hidden"
         animate="visible"
         variants={fadeUp}
-        style={{ marginBottom: 26 }}
+        style={{ marginBottom: 32 }}
       >
         <h2
           style={{
             fontSize: "1.6rem",
             fontWeight: 800,
             color: "#0f172a",
-            marginBottom: 4,
+            marginBottom: 8,
           }}
         >
           Receptionist Dashboard
         </h2>
-        <p style={{ color: "#64748b", fontSize: "0.875rem" }}>
+        <p style={{ color: "#64748b", fontSize: "0.875rem", marginBottom: 4 }}>
           {new Date().toLocaleDateString("en-US", {
             weekday: "long",
             year: "numeric",
@@ -144,8 +144,8 @@ const ReceptionistDashboard = () => {
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
-          gap: 14,
-          marginBottom: 24,
+          gap: 18,
+          marginBottom: 32,
         }}
       >
         <StatCard
@@ -184,14 +184,14 @@ const ReceptionistDashboard = () => {
         initial="hidden"
         animate="visible"
         variants={fadeUp}
-        style={{ marginBottom: 24 }}
+        style={{ marginBottom: 32 }}
       >
         <h3
           style={{
-            fontSize: "0.9rem",
+            fontSize: "0.95rem",
             fontWeight: 700,
             color: "#1e293b",
-            marginBottom: 12,
+            marginBottom: 16,
           }}
         >
           Quick Actions
@@ -200,7 +200,7 @@ const ReceptionistDashboard = () => {
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-            gap: 12,
+            gap: 14,
           }}
         >
           {[
@@ -235,7 +235,7 @@ const ReceptionistDashboard = () => {
                   background: bg,
                   border: `1.5px solid ${color}22`,
                   borderRadius: 14,
-                  padding: "14px 16px",
+                  padding: "16px 18px",
                   textAlign: "center",
                   cursor: "pointer",
                   fontWeight: 700,
@@ -275,23 +275,23 @@ const ReceptionistDashboard = () => {
       >
         <div
           style={{
-            padding: "16px 22px",
+            padding: "18px 22px",
             borderBottom: "1px solid #f1f5f9",
             fontWeight: 700,
-            fontSize: "0.9rem",
+            fontSize: "0.95rem",
             color: "#1e293b",
             display: "flex",
             alignItems: "center",
-            gap: 7,
+            gap: 8,
           }}
         >
-          <Stethoscope size={16} color="#0d9488" /> Doctor Availability Today
+          <Stethoscope size={18} color="#0d9488" /> Doctor Availability Today
         </div>
-        <div style={{ padding: "8px 0" }}>
+        <div style={{ padding: "20px 0" }}>
           {(dash?.doctorAvailability || []).length === 0 && (
             <p
               style={{
-                padding: "20px 22px",
+                padding: "24px 22px",
                 color: "#94a3b8",
                 fontSize: "0.875rem",
               }}
@@ -307,7 +307,7 @@ const ReceptionistDashboard = () => {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                padding: "12px 22px",
+                padding: "16px 22px",
                 borderBottom: "1px solid #f8fafc",
               }}
             >
@@ -317,6 +317,7 @@ const ReceptionistDashboard = () => {
                     fontWeight: 700,
                     color: "#1e293b",
                     fontSize: "0.875rem",
+                    marginBottom: 4,
                   }}
                 >
                   {d.doctor?.fullname || "—"}
@@ -327,7 +328,7 @@ const ReceptionistDashboard = () => {
               </div>
               <span
                 style={{
-                  padding: "4px 12px",
+                  padding: "6px 14px",
                   borderRadius: 999,
                   fontSize: "0.72rem",
                   fontWeight: 700,

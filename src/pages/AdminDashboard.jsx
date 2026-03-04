@@ -69,10 +69,10 @@ const fadeUp = {
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload?.length) {
     return (
-      <div style={{ background: "#1e293b", color: "#fff", padding: "10px 16px", borderRadius: 10, fontSize: 12, boxShadow: "0 8px 20px rgba(0,0,0,0.25)" }}>
+      <div style={{ background: "var(--surface)", color: "var(--text-primary)", padding: "10px 16px", borderRadius: 10, fontSize: 12, boxShadow: "var(--shadow-lg)" }}>
         <p style={{ fontWeight: 700, marginBottom: 4 }}>{label}</p>
         {payload.map((p, i) => (
-          <p key={i} style={{ color: p.color || "#5eead4" }}>{p.name}: {p.name === "revenue" ? `$${p.value}` : p.value}</p>
+          <p key={i} style={{ color: p.color || "var(--accent)" }}>{p.name}: {p.name === "revenue" ? `$${p.value}` : p.value}</p>
         ))}
       </div>
     );
@@ -114,8 +114,8 @@ const AdminDashboard = () => {
     <div style={{ fontFamily: "'Outfit', sans-serif", paddingBottom: 48 }}>
 
       {/* ── Header ──────────────────────────────────────────────────────── */}
-      <motion.div initial="hidden" animate="visible" variants={fadeUp} style={{ marginBottom: 28 }}>
-        <h2 style={{ fontSize: "1.6rem", fontWeight: 800, color: "#0f172a", marginBottom: 4 }}>
+      <motion.div initial="hidden" animate="visible" variants={fadeUp} style={{ marginBottom: 32 }}>
+        <h2 style={{ fontSize: "1.6rem", fontWeight: 800, color: "#0f172a", marginBottom: 8 }}>
           Admin Dashboard
         </h2>
         <p style={{ color: "#64748b", fontSize: "0.875rem" }}>
@@ -124,7 +124,7 @@ const AdminDashboard = () => {
       </motion.div>
 
       {/* ── Stat Cards (Glassmorphism) ────────────────────────────────── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 16, marginBottom: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 18, marginBottom: 32 }}>
         {[
           { i: 0, title: "Total Doctors",    value: stats?.totalDoctors ?? 5,    icon: <Stethoscope size={22} color="#fff" />, color: "#0d9488", bg: "#0d9488", trend: "+2 new onboarding", hasBtn: true },
           { i: 1, title: "Active Clinics",   value: stats?.activeClinics ?? 3,   icon: <Users size={22} color="#fff" />,       color: "#6366f1", bg: "#6366f1", trend: "2 branches live" },
@@ -135,8 +135,8 @@ const AdminDashboard = () => {
             style={{
               background: "rgba(255,255,255,0.7)", backdropFilter: "blur(16px)",
               border: "1px solid rgba(255,255,255,0.9)", borderRadius: 18,
-              padding: "18px 20px", boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
-              display: "flex", flexDirection: "column", gap: 10,
+              padding: "20px 24px", boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
+              display: "flex", flexDirection: "column", gap: 12,
             }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
               <div style={{ width: 46, height: 46, borderRadius: 12, background: bg, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 4px 12px ${bg}55` }}>
@@ -150,8 +150,8 @@ const AdminDashboard = () => {
               )}
             </div>
             <div>
-              <p style={{ fontSize: "0.68rem", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 4 }}>{title}</p>
-              <h4 style={{ fontSize: "2rem", fontWeight: 800, color: "#0f172a", lineHeight: 1, marginBottom: 4 }}>{typeof value === "number" ? value.toLocaleString() : value}</h4>
+              <p style={{ fontSize: "0.68rem", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 8 }}>{title}</p>
+              <h4 style={{ fontSize: "2rem", fontWeight: 800, color: "#0f172a", lineHeight: 1, marginBottom: 8 }}>{typeof value === "number" ? value.toLocaleString() : value}</h4>
               <p style={{ fontSize: "0.72rem", fontWeight: 600, color: trendUp ? "#10b981" : "#94a3b8" }}>
                 {trendUp ? "↑ " : ""}{trend}
               </p>
@@ -161,11 +161,11 @@ const AdminDashboard = () => {
       </div>
 
       {/* ── Area Chart + Donut ───────────────────────────────────────── */}
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 16, marginBottom: 20 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 18, marginBottom: 28 }}>
 
         {/* Area Chart – Monthly Appointments vs Revenue */}
         <motion.div custom={4} initial="hidden" animate="visible" variants={fadeUp}
-          style={{ background: "rgba(255,255,255,0.7)", backdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.9)", borderRadius: 18, padding: "20px 24px", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
+          style={{ background: "rgba(255,255,255,0.7)", backdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.9)", borderRadius: 18, padding: "24px 28px", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
             <div>
               <p style={{ fontWeight: 700, fontSize: "0.9rem", color: "#1e293b", display: "flex", alignItems: "center", gap: 6 }}>
@@ -204,9 +204,9 @@ const AdminDashboard = () => {
 
         {/* Donut Chart */}
         <motion.div custom={5} initial="hidden" animate="visible" variants={fadeUp}
-          style={{ background: "rgba(255,255,255,0.7)", backdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.9)", borderRadius: 18, padding: "20px", boxShadow: "0 4px 24px rgba(0,0,0,0.06)", display: "flex", flexDirection: "column" }}>
-          <p style={{ fontWeight: 700, fontSize: "0.9rem", color: "#1e293b", display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
-            <Clock size={15} color="#94a3b8" /> Appointment Status
+          style={{ background: "rgba(255,255,255,0.7)", backdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.9)", borderRadius: 18, padding: "24px 28px", boxShadow: "0 4px 24px rgba(0,0,0,0.06)", display: "flex", flexDirection: "column" }}>
+          <p style={{ fontWeight: 700, fontSize: "0.95rem", color: "#1e293b", display: "flex", alignItems: "center", gap: 6, marginBottom: 12 }}>
+            <Clock size={16} color="#94a3b8" /> Appointment Status
           </p>
           <div style={{ display: "flex", justifyContent: "center", flex: 1, alignItems: "center" }}>
             <PieChart width={160} height={160}>
@@ -230,9 +230,9 @@ const AdminDashboard = () => {
 
       {/* ── Doctor Management Table ───────────────────────────────────── */}
       <motion.div custom={6} initial="hidden" animate="visible" variants={fadeUp}
-        style={{ background: "rgba(255,255,255,0.7)", backdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.9)", borderRadius: 18, overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.06)", marginBottom: 20 }}>
-        <div style={{ padding: "16px 24px", borderBottom: "1px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "#1e293b" }}>👨‍⚕️ Doctor Management</span>
+        style={{ background: "rgba(255,255,255,0.7)", backdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.9)", borderRadius: 18, overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.06)", marginBottom: 28 }}>
+        <div style={{ padding: "18px 24px", borderBottom: "1px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span style={{ fontWeight: 700, fontSize: "0.95rem", color: "#1e293b" }}>👨‍⚕️ Doctor Management</span>
           <button
             onClick={() => toast.success("New Doctor Added! 🎉")}
             style={{ fontSize: "0.78rem", fontWeight: 700, padding: "6px 14px", borderRadius: 10, border: "none", background: "#0d9488", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
@@ -244,7 +244,7 @@ const AdminDashboard = () => {
             <thead>
               <tr style={{ background: "#f8fafc" }}>
                 {["NAME & SPECIALIZATION", "STATUS", "PATIENTS", "ACTIONS"].map((h) => (
-                  <th key={h} style={{ padding: "10px 24px", textAlign: "left", fontSize: "0.68rem", fontWeight: 700, color: "#94a3b8", letterSpacing: "0.07em" }}>{h}</th>
+                  <th key={h} style={{ padding: "14px 24px", textAlign: "left", fontSize: "0.68rem", fontWeight: 700, color: "#94a3b8", letterSpacing: "0.07em" }}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -253,24 +253,24 @@ const AdminDashboard = () => {
                 <tr key={i} style={{ borderTop: "1px solid #f8fafc", position: "relative" }}
                   onMouseEnter={(e) => e.currentTarget.style.background = "#f8fafc55"}
                   onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}>
-                  <td style={{ padding: "12px 24px" }}>
-                    <p style={{ fontWeight: 700, color: "#1e293b", marginBottom: 2 }}>{doc.name}</p>
+                  <td style={{ padding: "16px 24px" }}>
+                    <p style={{ fontWeight: 700, color: "#1e293b", marginBottom: 4 }}>{doc.name}</p>
                     <p style={{ fontSize: "0.75rem", color: "#94a3b8" }}>{doc.spec}</p>
                   </td>
-                  <td style={{ padding: "12px 24px" }}>
+                  <td style={{ padding: "16px 24px" }}>
                     <span style={{
-                      display: "inline-flex", alignItems: "center", gap: 5,
-                      padding: "3px 10px", borderRadius: 999, fontSize: "0.72rem", fontWeight: 700,
+                      display: "inline-flex", alignItems: "center", gap: 6,
+                      padding: "5px 12px", borderRadius: 999, fontSize: "0.72rem", fontWeight: 700,
                       background: doc.status === "Online" ? "#ecfdf5" : "#f8fafc",
                       color: doc.status === "Online" ? "#059669" : "#94a3b8",
                       border: `1px solid ${doc.status === "Online" ? "#a7f3d0" : "#e2e8f0"}`,
                     }}>
-                      <span style={{ width: 6, height: 6, borderRadius: "50%", background: doc.status === "Online" ? "#10b981" : "#cbd5e1", display: "inline-block" }} />
+                      <span style={{ width: 7, height: 7, borderRadius: "50%", background: doc.status === "Online" ? "#10b981" : "#cbd5e1", display: "inline-block" }} />
                       {doc.status}
                     </span>
                   </td>
-                  <td style={{ padding: "12px 24px", fontWeight: 600, color: "#475569" }}>{doc.patients}</td>
-                  <td style={{ padding: "12px 24px", position: "relative" }}>
+                  <td style={{ padding: "16px 24px", fontWeight: 700, color: "#1e293b" }}>{doc.patients}</td>
+                  <td style={{ padding: "16px 24px", position: "relative" }}>
                     <button onClick={() => setOpenMenu(openMenu === i ? null : i)}
                       style={{ background: "none", border: "none", cursor: "pointer", color: "#94a3b8", display: "flex", alignItems: "center" }}>
                       <MoreVertical size={18} />
@@ -296,24 +296,24 @@ const AdminDashboard = () => {
       </motion.div>
 
       {/* ── Bottom Row: Schedule + SaaS Panel ───────────────────────── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
 
         {/* Today's Schedule */}
         <motion.div custom={7} initial="hidden" animate="visible" variants={fadeUp}
           style={{ background: "rgba(255,255,255,0.7)", backdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.9)", borderRadius: 18, overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
-          <div style={{ padding: "16px 20px", borderBottom: "1px solid #f1f5f9", fontWeight: 700, fontSize: "0.9rem", color: "#1e293b" }}>
+          <div style={{ padding: "18px 24px", borderBottom: "1px solid #f1f5f9", fontWeight: 700, fontSize: "0.95rem", color: "#1e293b" }}>
             📅 Today's Schedule
           </div>
-          <div style={{ padding: "0 8px 8px" }}>
+          <div style={{ padding: "16px 0" }}>
             {SCHEDULE.map((row, i) => {
               const sc = STATUS_COLOR[row.status];
               return (
-                <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 12px", borderBottom: i < SCHEDULE.length - 1 ? "1px solid #f8fafc" : "none" }}>
+                <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 24px", borderBottom: i < SCHEDULE.length - 1 ? "1px solid #f8fafc" : "none" }}>
                   <div>
-                    <p style={{ fontWeight: 600, color: "#1e293b", fontSize: "0.82rem" }}>{row.patient}</p>
-                    <p style={{ fontSize: "0.72rem", color: "#94a3b8" }}>{row.time} • {row.type}</p>
+                    <p style={{ fontWeight: 700, color: "#1e293b", fontSize: "0.875rem", marginBottom: 4 }}>{row.patient}</p>
+                    <p style={{ fontSize: "0.75rem", color: "#94a3b8" }}>{row.time} • {row.type}</p>
                   </div>
-                  <span style={{ padding: "3px 9px", borderRadius: 999, fontSize: "0.68rem", fontWeight: 700, background: sc.bg, color: sc.color, border: `1px solid ${sc.border}` }}>
+                  <span style={{ padding: "5px 12px", borderRadius: 999, fontSize: "0.7rem", fontWeight: 700, background: sc.bg, color: sc.color, border: `1px solid ${sc.border}` }}>
                     {row.status}
                   </span>
                 </div>
@@ -324,10 +324,10 @@ const AdminDashboard = () => {
 
         {/* SaaS Subscription Panel */}
         <motion.div custom={8} initial="hidden" animate="visible" variants={fadeUp}
-          style={{ background: "rgba(255,255,255,0.7)", backdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.9)", borderRadius: 18, padding: "20px", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-            <p style={{ fontWeight: 700, fontSize: "0.9rem", color: "#1e293b" }}>💎 SaaS Subscription</p>
-            <span style={{ fontSize: "0.7rem", fontWeight: 700, padding: "3px 10px", borderRadius: 999, background: isPro ? "#6366f1" : "#f1f5f9", color: isPro ? "#fff" : "#64748b", border: isPro ? "none" : "1px solid #e2e8f0" }}>
+          style={{ background: "rgba(255,255,255,0.7)", backdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.9)", borderRadius: 18, padding: "24px 28px", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+            <p style={{ fontWeight: 700, fontSize: "0.95rem", color: "#1e293b" }}>💎 SaaS Subscription</p>
+            <span style={{ fontSize: "0.71rem", fontWeight: 700, padding: "5px 12px", borderRadius: 999, background: isPro ? "#6366f1" : "#f1f5f9", color: isPro ? "#fff" : "#64748b", border: isPro ? "none" : "1px solid #e2e8f0" }}>
               {isPro ? "PRO PLAN" : "FREE PLAN"}
             </span>
           </div>

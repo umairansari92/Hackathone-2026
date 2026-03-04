@@ -72,6 +72,53 @@ export const patientApiSlice = apiSlice.injectEndpoints({
       query: () => "/patients",
       providesTags: ["Patient"],
     }),
+
+    // NEW: Search by UID / phone / name
+    searchPatients: builder.query({
+      query: (q) => `/patients/search?q=${q}`,
+      providesTags: ["Patient"],
+    }),
+
+    // NEW: Get patient by UID
+    getPatientByUID: builder.query({
+      query: (uid) => `/patients/uid/${uid}`,
+      providesTags: ["Patient"],
+    }),
+
+    // NEW: Get full history (visits + labs + pharmacy + prescriptions)
+    getPatientHistory: builder.query({
+      query: (id) => `/patients/${id}/history`,
+      providesTags: (_r, _e, id) => [{ type: "Patient", id }, "Visit"],
+    }),
+
+    // NEW: Create patient with full profile
+    createPatient: builder.mutation({
+      query: (data) => ({
+        url: "/patients",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Patient"],
+    }),
+
+    // NEW: Update patient
+    updatePatient: builder.mutation({
+      query: ({ id, ...data }) => ({
+        url: `/patients/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["Patient"],
+    }),
+
+    // NEW: Delete patient
+    deletePatient: builder.mutation({
+      query: (id) => ({
+        url: `/patients/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Patient"],
+    }),
   }),
 });
 
@@ -87,4 +134,10 @@ export const {
   useGetMyQueueStatusQuery,
   useGetMedicalHistoryQuery,
   useGetPatientsQuery,
+  useSearchPatientsQuery,
+  useGetPatientByUIDQuery,
+  useGetPatientHistoryQuery,
+  useCreatePatientMutation,
+  useUpdatePatientMutation,
+  useDeletePatientMutation,
 } = patientApiSlice;
