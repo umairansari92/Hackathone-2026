@@ -26,7 +26,7 @@ import toast from "react-hot-toast";
 
 import { useGetPatientHistoryQuery } from "../store/patientApiSlice";
 import { useCreateVisitMutation } from "../store/visitApiSlice";
-import { useGetDoctorsQuery } from "../store/userApiSlice";
+import { useGetAllUsersQuery } from "../store/userApiSlice";
 
 const InfoChip = ({ label, value, icon }) => (
   <div className="flex items-start gap-2 p-3 rounded-xl bg-(--hover)">
@@ -333,7 +333,7 @@ const PatientRecord = () => {
   const { data, isLoading, error } = useGetPatientHistoryQuery(id, {
     skip: !id,
   });
-  const { data: doctors = [] } = useGetDoctorsQuery();
+  const { data: doctors = [] } = useGetAllUsersQuery("Doctor");
   const [createVisit, { isLoading: creating }] = useCreateVisitMutation();
 
   const canCreateVisit = ["Admin", "Receptionist"].includes(user?.role);
